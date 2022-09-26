@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'post.apps.PostConfig',
 
     # 3rd Party Packages
-    "phonenumber_field",
+    'phonenumber_field',
     'drf_yasg'
 ]
 
