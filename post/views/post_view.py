@@ -1,4 +1,5 @@
-from rest_framework import generics, parsers
+from rest_framework import generics, parsers, status
+from rest_framework.response import Response
 
 from post.serializers.post_serializer import PostSerializer
 from post.models.post_model import Post
@@ -24,4 +25,8 @@ class PostDestroyAPIView(generics.DestroyAPIView):
     lookup_field = "pk"
 
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        if Post.objects.filter(user=request.user):
+            return super().destroy(request, *args, **kwargs)
+        return Response(
+            {"message": "403 forbidden"}, status=status.HTTP_403_FORBIDDEN
+        )
