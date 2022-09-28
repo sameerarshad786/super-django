@@ -4,8 +4,8 @@ from core.models.core_model import UUID
 from core.models.user_model import User
 
 
-"""user uploaded pictures, videos, and documents"""
 def post_uploaded_files(instance, filename):
+    """user uploaded pictures, videos, and documents"""
     return f"post_files/{instance.id}/{filename}"
 
 

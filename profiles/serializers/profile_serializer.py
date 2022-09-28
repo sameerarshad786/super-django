@@ -23,5 +23,5 @@ class ProfileSerializer(serializers.ModelSerializer):
         if user == instance.user:
             return super().update(instance, validated_data)
         raise serializers.ValidationError(_(
-            "you cant update someone profile"
+            "403 forbidden"
         ))
