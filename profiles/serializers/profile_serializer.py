@@ -20,7 +20,19 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
+        profile_image = validated_data.get("profile_image")
+        cover_image = validated_data.get("cover_image")
+        user_gender = validated_data.get("user_gender")
         if user == instance.user:
+            if profile_image == None:
+                if user_gender == Profile.Gender.MALE:
+                    validated_data.update(profile_image="profile/male.png")
+                if user_gender == Profile.Gender.FEMALE:
+                    validated_data.update(profile_image="profile/female.png")
+
+            if cover_image == None:
+                validated_data.update(cover_image="cover/default-cover.png")
+
             return super().update(instance, validated_data)
         raise serializers.ValidationError(_(
             "403 forbidden"
