@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.models.core_model import UUID
+from core.mixins import UUID
 from core.models.user_model import User
 
 
