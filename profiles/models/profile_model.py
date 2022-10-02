@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from phonenumber_field.modelfields import PhoneNumberField
 
-from core.models.core_model import UUID
+from core.mixins import UUID
 from core.models.user_model import User
 
 
