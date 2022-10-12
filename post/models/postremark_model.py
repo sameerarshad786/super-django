@@ -6,25 +6,22 @@ from core.models.user_model import User
 from .post_model import Post
 
 
+def comment_media_path(instance, filename):
+    return f"comments/{instance.id}/{filename}"
+
+
 class PostRemark(UUID):
     class Popularity(models.TextChoices):
         LIKE = ("like", _("LIKE"))
         DISLIKE = ("dislike", _("DISLIKE"))
 
-    popularity = models.CharField(
-        max_length=11, choices=Popularity.choices, blank=True
-    )
-    on_post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
+    popularity = models.CharField(max_length=11, choices=Popularity.choices)
+    on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __str__(self) -> str:
-        return f"{self.user}"
 
-    def get_on_postID(self):
-        return f"{(self.on_post).id}"
+class Comments(UUID):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    comment = models.TextField(blank=True)
+    files = models.FileField(upload_to=comment_media_path, blank=True)

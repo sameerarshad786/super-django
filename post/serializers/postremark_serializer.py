@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers, exceptions
 
-from post.models.postremark_model import PostRemark
+from post.models.postremark_model import PostRemark, Comments
 
 
 class PostRemarkSerializer(serializers.ModelSerializer):
@@ -27,3 +27,16 @@ class PostRemarkSerializer(serializers.ModelSerializer):
         raise exceptions.PermissionDenied(_(
             "403 forbidden"
         ))
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments
+        fields = ("id", "user", "on_post", "comment", "files")
+        extra_kwargs = {
+            "user": {"read_only": True}
+        }
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return Comments.objects.create(user=user, **validated_data)

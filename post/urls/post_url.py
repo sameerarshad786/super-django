@@ -7,7 +7,7 @@ POST_PATTERNS = [
     path("reform/", views.PostAPIView.as_view(), name="post-create"),
     path("update/<str:pk>/", views.PostUpdateAPIView.as_view(),
          name="post-update"),
-    path("destroy/<str:pk>/", views.PostDestroyAPIView.as_view(),
+    path("delete/<str:pk>/", views.PostDestroyAPIView.as_view(),
          name="post-destroy")
 ]
 
@@ -16,6 +16,12 @@ POST_REMARKS_PATTERNS = [
          name="remark-create"),
     path("update/<str:pk>/", views.PostRemarkUpdateAPIView.as_view(),
          name="remark-update"),
-    path("destroy/<str:pk>/", views.PostRemarkDestroyAPIView.as_view(),
+    path("delete/<str:pk>/", views.PostRemarkDestroyAPIView.as_view(),
          name="remark-destroy")
+]
+
+COMMENTS_PATTERNS = [
+     path("create/", views.CommentCreateAPIView.as_view(), name="comment-create"),
+     path("update/<str:pk>/", views.CommentUpdateAPIView.as_view(), name="comment-update"),
+     path("delete/<str:pk>/", views.CommentDestroyAPIView.as_view(), name="comment-destroy")
 ]
