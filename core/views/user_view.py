@@ -1,6 +1,8 @@
 import jwt
 
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 
 from core.serializers.user_serializer import (
     RegisterSerializer, EmailVerificationSerializer,
@@ -11,6 +13,7 @@ from core.utils.auth_mails import Util
 
 from rest_framework import generics, views, permissions, status
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -25,14 +28,19 @@ class RegisterAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        user_data = serializer.data["email"]
+        user_data = serializer.data
+        user = User.objects.get(email=user_data["email"])
+        current_site = get_current_site(request).domain
+        relativeLink = reverse("verify-email")
+        token = RefreshToken().for_user(user)
+        absurl = f"{current_site}{relativeLink}?token={str(token)}"
         data = {
-            "user_data": user_data,
-            "request": request,
+            "to_email": user_data["email"],
+            "absurl": absurl,
         }
         Util.send_registration_mail(data)
         return Response(
-            {"message": "we have sent you an email with instruction"},
+            absurl,
             status=status.HTTP_201_CREATED
         )
 
