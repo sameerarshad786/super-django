@@ -109,7 +109,6 @@ class LogoutSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         self.token = attrs["refresh"]
-        print(self.token)
         return attrs
 
     def save(self, **kwargs):
