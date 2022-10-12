@@ -3,6 +3,8 @@ import jwt
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 
 from core.serializers.user_serializer import (
     RegisterSerializer, EmailVerificationSerializer,
@@ -30,23 +32,19 @@ class RegisterAPIView(generics.GenericAPIView):
 
         user_data = serializer.data
         user = User.objects.get(email=user_data["email"])
-
-        token = RefreshToken().for_user(user)
         current_site = get_current_site(request).domain
         relativeLink = reverse("verify-email")
-
-        absurl = f"http://{current_site}{relativeLink}?token={str(token)}"
-
+        token = RefreshToken().for_user(user)
+        absurl = f"{current_site}{relativeLink}?token={str(token)}"
         data = {
-            "email_subject": "Registration Link",
+            "to_email": user_data["email"],
             "absurl": absurl,
-            "to_email": user.email,
         }
 
         Util.send_registration_mail(data)
 
         return Response(
-            {"message": "we have sent you an email with instruction"},
+            absurl,
             status=status.HTTP_201_CREATED
         )
 
