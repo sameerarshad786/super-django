@@ -30,7 +30,7 @@ class RegisterAPIView(generics.GenericAPIView):
             "user_data": user_data,
             "request": request,
         }
-        Util.send_verification_mail(data)
+        Util.send_registration_mail(data)
         return Response(
             {"message": "we have sent you an email with instruction"},
             status=status.HTTP_201_CREATED
