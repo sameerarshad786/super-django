@@ -5,6 +5,7 @@ from core.models.user_model import User
 
 
 REGISTER_URL = reverse("register")
+VERIFY_EMAIL = reverse("verify-email")
 LOGIN_URL = reverse("login")
 LOGOUT_URL = reverse("logout")
 
@@ -37,18 +38,36 @@ class UserAuthenticationTest(TestCase):
         )
         self.assertEqual(response.status_code, 201)
 
-    def test_verified_user_login(self):
-        user = User.objects.create(email=self.email, is_verified=True)
-        user.set_password(self.password)
-        user.save()
+    def test_verify_user_with_valid_token(self):
         payload = {
             "email": self.email,
-            "password": self.password
+            "password": self.password,
+            "confirm_password": self.confirm_password
         }
         response = self.client.post(
-            LOGIN_URL, payload
+            REGISTER_URL, payload
         )
-        self.assertEqual(response.status_code, 200)
+        token = str(response.data).split("=")
+        token_verification = {"token": token[1]}
+        res = self.client.get(
+            VERIFY_EMAIL, token_verification
+        )
+        self.assertEqual(res.status_code, 200)
+
+    def test_verify_user_with_invalid_token(self):
+        payload = {
+            "email": self.email,
+            "password": self.password,
+            "confirm_password": self.confirm_password
+        }
+        self.client.post(
+            REGISTER_URL, payload
+        )
+        token_verification = {"token": "jkbnibuyhb09hq9bib8"}
+        res = self.client.get(
+            VERIFY_EMAIL, token_verification
+        )
+        self.assertEqual(res.status_code, 400)
 
     def test_user_login_failed_is_deactivate_by_admin(self):
         user = User.objects.create(
@@ -77,3 +96,16 @@ class UserAuthenticationTest(TestCase):
             LOGIN_URL, payload
         )
         self.assertEqual(response.status_code, 401)
+
+    def test_verified_user_login(self):
+        user = User.objects.create(email=self.email, is_verified=True)
+        user.set_password(self.password)
+        user.save()
+        payload = {
+            "email": self.email,
+            "password": self.password
+        }
+        response = self.client.post(
+            LOGIN_URL, payload
+        )
+        self.assertEqual(response.status_code, 200)

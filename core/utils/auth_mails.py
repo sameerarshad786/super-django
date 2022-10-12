@@ -10,7 +10,7 @@ class Util:
             {"absurl": data["absurl"]}
         )
         msg = EmailMessage(
-            subject=data["email_subject"], body=html_content,
+            subject="Registration Mail", body=html_content,
             to=[data["to_email"]]
         )
         msg.content_subtype = "html"
