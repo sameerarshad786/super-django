@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, parsers
+from rest_framework import generics, parsers
 
 from profiles.serializers.profile_serializer import ProfileSerializer
 from profiles.models.profile_model import Profile

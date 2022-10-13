@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.urls import reverse
 
 from core.models.user_model import User
 from profiles.models.profile_model import Profile
