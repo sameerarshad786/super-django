@@ -15,3 +15,15 @@ class Util:
         )
         msg.content_subtype = "html"
         msg.send()
+
+    def password_reset_mail(data):
+        html_content = render_to_string(
+            "auth_mails/password_reset_mail.html",
+            {"absurl": data["absurl"]}
+        )
+        msg = EmailMessage(
+            subject="Password Reset", body=html_content,
+            to=[data["to_email"]]
+        )
+        msg.content_subtype = "html"
+        msg.send()
