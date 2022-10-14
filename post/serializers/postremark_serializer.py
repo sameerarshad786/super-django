@@ -17,7 +17,7 @@ class PostRemarkSerializer(serializers.ModelSerializer):
         on_post = validated_data.get("on_post")
         user = self.context["request"].user
         if PostRemark.objects.filter(user=user, on_post=on_post).exists():
-            raise exceptions.Throttled(_("Entry already created"))
+            raise exceptions.NotAcceptable(_("Entry already created"))
         return PostRemark.objects.create(user=user, **validated_data)
 
     def update(self, instance, validated_data):

@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, parsers
 from rest_framework.response import Response
 
 from post.serializers.postremark_serializer import (PostRemarkSerializer,
@@ -39,10 +39,12 @@ class PostRemarkDestroyAPIView(generics.DestroyAPIView):
 class CommentCreateAPIView(generics.CreateAPIView):
     serializer_class = CommentsSerializer
     queryset = Comments.objects.all()
+    parser_classes = (parsers.MultiPartParser,)
 
 
 class CommentUpdateAPIView(generics.UpdateAPIView):
     serializer_class = CommentsSerializer
+    parser_classes = (parsers.MultiPartParser,)
 
     def get_queryset(self):
         return Comments.objects.filter(user=self.request.user)
@@ -50,6 +52,6 @@ class CommentUpdateAPIView(generics.UpdateAPIView):
 
 class CommentDestroyAPIView(generics.DestroyAPIView):
     serializer_class = CommentsSerializer
-
+    
     def get_queryset(self):
         return Comments.objects.filter(user=self.request.user)
