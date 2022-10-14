@@ -50,7 +50,7 @@ class PostSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_comments(self, obj):
-        return Comments.objects.all().values()
+        return Comments.objects.filter(on_post=obj).values()
 
     def create(self, validated_data):
         user = self.context["request"].user
