@@ -21,6 +21,3 @@ class Post(UUID):
     other_files = models.FileField(
         upload_to=post_uploaded_files
     )
-
-    def __str__(self) -> str:
-        return f"{self.user}"

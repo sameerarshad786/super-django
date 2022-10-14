@@ -38,6 +38,3 @@ class Profile(UUID):
     )
     phone_number = PhoneNumberField(blank=True)
     about = models.TextField()
-
-    def __str__(self) -> str:
-        return f"{self.user}"
