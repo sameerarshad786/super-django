@@ -153,7 +153,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'NON_FIELD_ERRORS_KEY': 'errors'
+    'NON_FIELD_ERRORS_KEY': 'errors',
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 # Authentication for active and non active users
