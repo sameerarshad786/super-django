@@ -142,6 +142,7 @@ class ResetPasswordAPIView(generics.GenericAPIView):
 
 
 class ResetPasswordConfirmAPIView(generics.GenericAPIView):
+    serializer_class = ResetPasswordSerializer
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, uidb64, token):
