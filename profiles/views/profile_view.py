@@ -12,4 +12,6 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
 class ProfileUpdateAPIView(generics.UpdateAPIView):
     serializer_class = ProfileSerializer
     parser_classes = (parsers.MultiPartParser, )
-    queryset = Profile.objects.all()
+
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user)
