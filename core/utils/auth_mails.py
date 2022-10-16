@@ -30,6 +30,7 @@ class Util:
         msg.content_subtype = "html"
         msg.send()
 
+    @staticmethod
     def password_reset_mail(data):
         user = User.objects.get(email=data["request"].data["email"])
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
