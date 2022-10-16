@@ -1,5 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models.user_model import User
 
@@ -44,13 +47,13 @@ class UserAuthenticationTest(TestCase):
             "password": self.password,
             "confirm_password": self.confirm_password
         }
-        response = self.client.post(
+        self.client.post(
             REGISTER_URL, payload
         )
-        token = str(response.data).split("=")
-        token_verification = {"token": token[1]}
+        user = get_user_model().objects.last()
+        token = str(RefreshToken().for_user(user).access_token)
         res = self.client.get(
-            VERIFY_EMAIL, token_verification
+            VERIFY_EMAIL, {"token": token}
         )
         self.assertEqual(res.status_code, 200)
 
