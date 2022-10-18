@@ -1,4 +1,6 @@
-from rest_framework import generics, status, parsers
+from django.utils.translation import gettext_lazy as _
+
+from rest_framework import generics, status, parsers, exceptions
 from rest_framework.response import Response
 
 from post.serializers.postremark_serializer import (PostRemarkSerializer,
@@ -50,6 +52,11 @@ class CommentUpdateAPIView(generics.UpdateAPIView):
 
 class CommentDestroyAPIView(generics.DestroyAPIView):
     serializer_class = CommentsSerializer
+    queryset = Comments.objects.all()
 
-    def get_queryset(self):
-        return Comments.objects.filter(user=self.request.user)
+    def destroy(self, request, *args, **kwargs):
+        if Comments.objects.filter(user=self.request.user):
+            return super().destroy(request, *args, **kwargs)
+        raise exceptions.PermissionDenied(_(
+            "403 forbidden"
+        ))
