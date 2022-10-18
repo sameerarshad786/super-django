@@ -1,8 +1,7 @@
-from django.utils.translation import gettext_lazy as _
-
-from rest_framework import generics, status, parsers, exceptions
+from rest_framework import generics, status, parsers
 from rest_framework.response import Response
 
+from core.permissions import IsOwner
 from post.serializers.postremark_serializer import (PostRemarkSerializer,
                                                     CommentsSerializer)
 from post.models.postremark_model import PostRemark, Comments
@@ -23,19 +22,13 @@ class PostRemarkCreateAPIView(generics.CreateAPIView):
 class PostRemarkUpdateAPIView(generics.UpdateAPIView):
     serializer_class = PostRemarkSerializer
     queryset = PostRemark.objects.all()
+    permission_classes = (IsOwner, )
 
 
 class PostRemarkDestroyAPIView(generics.DestroyAPIView):
     serializer_class = PostRemarkSerializer
     queryset = PostRemark.objects.all()
-
-    def destroy(self, request, *args, **kwargs):
-        if PostRemark.objects.filter(user=request.user):
-            return super().destroy(request, *args, **kwargs)
-        return Response(
-            {"message": "403 forbidden"},
-            status=status.HTTP_403_FORBIDDEN
-        )
+    permission_classes = (IsOwner, )
 
 
 class CommentCreateAPIView(generics.CreateAPIView):
@@ -48,15 +41,10 @@ class CommentUpdateAPIView(generics.UpdateAPIView):
     serializer_class = CommentsSerializer
     parser_classes = (parsers.MultiPartParser,)
     queryset = Comments.objects.all()
+    permission_classes = (IsOwner, )
 
 
 class CommentDestroyAPIView(generics.DestroyAPIView):
     serializer_class = CommentsSerializer
     queryset = Comments.objects.all()
-
-    def destroy(self, request, *args, **kwargs):
-        if Comments.objects.filter(user=self.request.user):
-            return super().destroy(request, *args, **kwargs)
-        raise exceptions.PermissionDenied(_(
-            "403 forbidden"
-        ))
+    permission_classes = (IsOwner, )

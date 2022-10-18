@@ -20,14 +20,6 @@ class PostRemarkSerializer(serializers.ModelSerializer):
             raise exceptions.NotAcceptable(_("Entry already created"))
         return PostRemark.objects.create(user=user, **validated_data)
 
-    def update(self, instance, validated_data):
-        user = self.context["request"].user
-        if user == instance.user:
-            return super().update(instance, validated_data)
-        raise exceptions.PermissionDenied(_(
-            "403 forbidden"
-        ))
-
 
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,11 +34,3 @@ class CommentsSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
         return Comments.objects.create(user=user, **validated_data)
-
-    def update(self, instance, validated_data):
-        user = self.context["request"].user
-        if user == instance.user:
-            return super().update(instance, validated_data)
-        raise exceptions.PermissionDenied(_(
-            "403 forbidden"
-        ))
