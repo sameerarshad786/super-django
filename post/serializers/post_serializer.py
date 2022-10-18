@@ -1,6 +1,4 @@
-from django.utils.translation import gettext_lazy as _
-
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 
 from post.models.post_model import Post
 from post.models.postremark_model import Comments, PostRemark
@@ -66,11 +64,3 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
         return Post.objects.create(user=user, **validated_data)
-
-    def update(self, instance, validated_data):
-        user = self.context["request"].user
-        if user == instance.user:
-            return super().update(instance, validated_data)
-        raise exceptions.PermissionDenied(_(
-            "403 forbidden"
-        ))
