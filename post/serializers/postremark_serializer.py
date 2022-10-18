@@ -8,7 +8,7 @@ from post.models.postremark_model import PostRemark, Comments
 class PostRemarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostRemark
-        fields = ("popularity", "on_post", "user")
+        fields = ("id", "user", "on_post", "popularity", "updated", "created")
         extra_kwargs = {
             "user": {"read_only": True}
         }
@@ -32,7 +32,9 @@ class PostRemarkSerializer(serializers.ModelSerializer):
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
-        fields = ("id", "user", "on_post", "comment", "files")
+        fields = (
+            "id", "user", "on_post", "comment", "files", "updated", "created"
+        )
         extra_kwargs = {
             "user": {"read_only": True}
         }
@@ -40,3 +42,11 @@ class CommentsSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
         return Comments.objects.create(user=user, **validated_data)
+
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+        if user == instance.user:
+            return super().update(instance, validated_data)
+        raise exceptions.PermissionDenied(_(
+            "403 forbidden"
+        ))

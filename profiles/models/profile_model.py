@@ -20,19 +20,10 @@ class Profile(UUID):
         MALE = "male", _("Male")
         FEMALE = "female", _("Female")
 
-    user_gender = models.CharField(
-        max_length=10, choices=Gender.choices
-    )
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE
-    )
-    username = models.CharField(
-        max_length=15
-    )
-    profile_image = models.ImageField(
-        upload_to=profile_photo_path
-    )
+    user_gender = models.CharField(max_length=10, choices=Gender.choices)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=15)
+    profile_image = models.ImageField(upload_to=profile_photo_path)
     cover_image = models.ImageField(
         upload_to=cover_photo_path, default="cover/default.png"
     )

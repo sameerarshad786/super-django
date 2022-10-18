@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from core.mixins import UUID
 from core.models.user_model import User
-from .post_model import Post
+from core.mixins import UUID
+from post.models.post_model import Post
 
 
 def comment_media_path(instance, filename):
@@ -24,4 +24,4 @@ class Comments(UUID):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment = models.TextField(blank=True)
-    files = models.FileField(upload_to=comment_media_path, blank=True)
+    files = models.FileField("file", upload_to=comment_media_path, blank=True)

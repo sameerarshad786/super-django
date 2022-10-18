@@ -5,21 +5,21 @@ from post.models.postremark_model import PostRemark, Comments
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "title", "text", "created", "updated")
+    list_display = ("id", "user", "text", "created", "updated")
 
 
 admin.site.register(Post, PostAdmin)
 
 
 class PostRemarkAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "on_post", "popularity"]
+    list_display = ("id", "user", "post", "popularity", "created", "updated")
 
 
 admin.site.register(PostRemark, PostRemarkAdmin)
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "on_post", "comment"]
+    list_display = ("id", "user", "post", "comment", "created", "updated")
 
 
 admin.site.register(Comments, CommentAdmin)

@@ -16,7 +16,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            "id", "user", "title", "text", "other_files", "like",
+            "id", "user", "text", "files", "like",
             "dislike", "current_user_like", "current_user_dislike",
             "comments", "created", "updated"
         )
@@ -24,7 +24,7 @@ class PostSerializer(serializers.ModelSerializer):
             "user": {"read_only": True},
             "title": {"required": False},
             "text": {"required": False},
-            "other_files": {"required": False}
+            "files": {"required": False}
         }
 
     def get_like(self, obj):
@@ -50,7 +50,18 @@ class PostSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_comments(self, obj):
-        return Comments.objects.filter(on_post=obj).values()
+        return Comments.objects.filter(on_post=obj).values(
+            "id",
+            "on_post",
+            "comment",
+            "files",
+            "user",
+            "user__profile",
+            "user__profile__username",
+            "user__profile__profile_image",
+            "created_at",
+            "updated_at"
+        )
 
     def create(self, validated_data):
         user = self.context["request"].user
