@@ -1,7 +1,7 @@
 from django.db import models
 
-from core.mixins import UUID
 from core.models.user_model import User
+from core.mixins import UUID
 
 
 def post_uploaded_files(instance, filename):
@@ -10,14 +10,6 @@ def post_uploaded_files(instance, filename):
 
 
 class Post(UUID):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-    title = models.CharField(
-        max_length=50
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
-    other_files = models.FileField(
-        upload_to=post_uploaded_files
-    )
+    files = models.FileField("file", upload_to=post_uploaded_files)

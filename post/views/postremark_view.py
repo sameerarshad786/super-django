@@ -45,13 +45,11 @@ class CommentCreateAPIView(generics.CreateAPIView):
 class CommentUpdateAPIView(generics.UpdateAPIView):
     serializer_class = CommentsSerializer
     parser_classes = (parsers.MultiPartParser,)
-
-    def get_queryset(self):
-        return Comments.objects.filter(user=self.request.user)
+    queryset = Comments.objects.all()
 
 
 class CommentDestroyAPIView(generics.DestroyAPIView):
     serializer_class = CommentsSerializer
-    
+
     def get_queryset(self):
         return Comments.objects.filter(user=self.request.user)
