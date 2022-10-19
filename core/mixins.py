@@ -18,9 +18,9 @@ class UUID(models.Model):
     )
 
     def created(self):
-        splitting = str(timesince.timesince(self.created_at))
-        return f"{splitting.split(',')[0]}"
+        splitting = timesince.timesince(self.created_at).split(", ")[0]
+        return splitting
 
     def updated(self):
-        splitting = str(timesince.timesince(self.updated_at))
-        return f"{splitting.split(',')[0]}"
+        splitting = timesince.timesince(self.updated_at).split(", ")[0]
+        return splitting

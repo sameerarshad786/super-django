@@ -12,14 +12,14 @@ admin.site.register(Post, PostAdmin)
 
 
 class PostRemarkAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "post", "popularity", "created", "updated")
+    list_display = ("id", "user", "on_post", "popularity", "created", "updated")
 
 
 admin.site.register(PostRemark, PostRemarkAdmin)
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "post", "comment", "created", "updated")
+    list_display = ("id", "user", "on_post", "comment", "created", "updated")
 
 
 admin.site.register(Comments, CommentAdmin)
