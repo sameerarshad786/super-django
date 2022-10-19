@@ -16,7 +16,7 @@ class UserProfileTest(TestCase):
         self.email = "testuser@paksocial.com"
         self.password = "testing321"
         self.user = User.objects.create(
-            email=self.email, is_verified=True
+            email=self.email
         )
         self.user.set_password(self.password)
         self.user.save()
@@ -32,12 +32,14 @@ class UserProfileTest(TestCase):
         user = get_user_model().objects.last()
         self.tokens = RefreshToken().for_user(user)
 
-    def test_verified_user_profile(self):
+    def test_create_verified_user_profile(self):
+        self.user.is_verified = True
         self.assertTrue(self.user.is_verified)
         profile = Profile.objects.create(user=self.user)
         self.assertTrue(profile)
 
     def test_retrieve_profile(self):
+        self.user.is_verified = True
         self.assertTrue(self.user.is_verified)
         profile = Profile.objects.create(user=self.user)
         self.assertTrue(profile)
@@ -47,3 +49,28 @@ class UserProfileTest(TestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_update_verified_user_profile(self):
+        self.user.is_verified = True
+        self.assertTrue(self.user.is_verified)
+        profile = Profile.objects.create(user=self.user)
+        self.assertTrue(profile)
+
+        response = self.client.patch(
+            reverse("profile-update", args=[profile.id]),
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_someone_profile_failed(self):
+        self.user.is_verified = True
+        self.assertTrue(self.user.is_verified)
+        profile = Profile.objects.create(user=self.user)
+        self.assertTrue(profile)
+
+        response = self.client.patch(
+            reverse("profile-update",
+                    args=["0db2ad5c-cca2-47e1-a1b1-3ba0d006023a"]),
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        self.assertEqual(response.status_code, 404)
