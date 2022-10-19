@@ -1,8 +1,10 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, \
     PermissionsMixin
 from django.utils.translation import gettext_lazy as _
-from django.utils import timesince
+from django.utils import timesince, timezone
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -50,10 +52,18 @@ class User(AbstractBaseUser, PermissionsMixin):
             "access_token": str(refresh.access_token)
         }
 
-    def created(self):
-        splitting = str(timesince.timesince(self.created_at))
-        return f"joined {splitting.split(', ')[0]} ago"
+    def joined(self):
+        created = timesince.timesince(self.created_at).split(", ")[0]
+        x = timezone.now() - self.created_at
+        if int(x.total_seconds()) <= timedelta(seconds=10).seconds:
+            return "just now"
+        elif int(x.total_seconds()) <= timedelta(seconds=59).seconds:
+            return f"{int(x.total_seconds())} seconds ago"
+        return f"{created} ago"
 
     def updated(self):
-        splitting = str(timesince.timesince(self.updated_at))
-        return f"updated {splitting.split(', ')[0]} ago"
+        updated = timesince.timesince(self.updated_at).split(", ")[0]
+        x = timezone.now() - self.updated_at
+        if int(x.total_seconds()) <= timedelta(seconds=59).seconds:
+            return f"updated {int(x.total_seconds())} seconds ago"
+        return f"{updated} ago"
