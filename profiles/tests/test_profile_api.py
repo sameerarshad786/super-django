@@ -69,7 +69,8 @@ class UserProfileTest(TestCase):
         self.assertTrue(profile)
 
         response = self.client.patch(
-            reverse("profile-update", args=["0db2ad5c-cca2-47e1-a1b1-3ba0d006023a"]),
+            reverse("profile-update",
+                    args=["0db2ad5c-cca2-47e1-a1b1-3ba0d006023a"]),
             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
         )
         self.assertEqual(response.status_code, 404)
