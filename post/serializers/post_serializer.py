@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from post.models.post_model import Post
 from post.models.postremark_model import Comments, PostRemark
-from post.serializers.postremark_serializer import CommentsSerializer
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -16,7 +15,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            "id", "user", "text", "files", "like", "dislike", 
+            "id", "user", "text", "files", "like", "dislike",
             "current_user_like", "current_user_dislike", "popularities",
             "comments", "created", "updated"
         )
@@ -66,7 +65,6 @@ class PostSerializer(serializers.ModelSerializer):
     def get_comments(self, obj):
         return Comments.objects.filter(on_post=obj).values(
             "id",
-            "on_post",
             "comment",
             "files",
             "user",
