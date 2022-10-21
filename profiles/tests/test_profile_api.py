@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from core.models.user_model import User
 from profiles.models.profile_model import Profile
 
 
@@ -15,7 +14,7 @@ class UserProfileTest(TestCase):
     def setUp(self) -> None:
         self.email = "testuser@paksocial.com"
         self.password = "testing321"
-        self.user = User.objects.create(
+        self.user = get_user_model().objects.create(
             email=self.email
         )
         self.user.set_password(self.password)
