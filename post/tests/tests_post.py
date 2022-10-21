@@ -7,14 +7,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 LOGIN_URL = reverse("login")
 
+POST_PATTERNS = reverse("post-create")
+
 
 class PostTest(TestCase):
     def setUp(self) -> None:
         self.email = "testuser@paksocial.com"
         self.password = "testing321"
-        self.user = User.objects.create(
+        self.user = get_user_model().objects.create(
             email=self.email
         )
+        self.user.is_verified = True
         self.user.set_password(self.password)
         self.user.save()
 
@@ -28,3 +31,10 @@ class PostTest(TestCase):
         )
         user = get_user_model().objects.last()
         self.tokens = RefreshToken().for_user(user)
+
+    def test_user_create_post(self):
+        response = self.client.post(
+            POST_PATTERNS,
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        self.assertEqual(response.status_code, 201)
