@@ -4,7 +4,8 @@ from post import views
 
 
 POST_PATTERNS = [
-    path("reform/", views.PostAPIView.as_view(), name="post-create"),
+    path("list/", views.PostListAPIView.as_view(), name="post-list"),
+    path("create/", views.PostCreateAPIView.as_view(), name="post-create"),
     path("update/<str:pk>/", views.PostUpdateAPIView.as_view(),
          name="post-update"),
     path("delete/<str:pk>/", views.PostDestroyAPIView.as_view(),
