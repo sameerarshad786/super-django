@@ -33,7 +33,6 @@ class PostTest(TestCase):
         self.tokens = RefreshToken().for_user(user)
 
     def test_user_create_post(self):
-
         payload = {
             "text": "post for testing api's"
         }
@@ -71,9 +70,9 @@ class PostTest(TestCase):
         )
         self.assertEqual(response.status_code, 204)
 
+
         response = self.client.post(
             POST_PATTERNS,
             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
         )
         self.assertEqual(response.status_code, 201)
-
