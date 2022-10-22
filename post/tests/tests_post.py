@@ -33,8 +33,47 @@ class PostTest(TestCase):
         self.tokens = RefreshToken().for_user(user)
 
     def test_user_create_post(self):
+
+        payload = {
+            "text": "post for testing api's"
+        }
+        response = self.client.post(
+            POST_PATTERNS, payload,
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        self.assertEqual(response.status_code, 201)
+
+    def test_user_update_post(self):
+        payload = {
+            "text": "post for testing api's"
+        }
+        res =  self.client.post(
+            POST_PATTERNS, payload,
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        response = self.client.patch(
+            reverse("post-update", args=[res.data.get("id")]),
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_delete_post(self):
+        payload = {
+            "text": "post for testing api's"
+        }
+        res =  self.client.post(
+            POST_PATTERNS, payload,
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        response = self.client.delete(
+            reverse("post-destroy", args=[res.data.get("id")]),
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+        )
+        self.assertEqual(response.status_code, 204)
+
         response = self.client.post(
             POST_PATTERNS,
             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
         )
         self.assertEqual(response.status_code, 201)
+
