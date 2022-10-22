@@ -33,7 +33,6 @@ class PostTest(TestCase):
         self.tokens = RefreshToken().for_user(user)
 
     def test_user_create_post(self):
-
         payload = {
             "text": "post for testing api's"
         }

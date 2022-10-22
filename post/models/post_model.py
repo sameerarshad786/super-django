@@ -13,6 +13,3 @@ class Post(UUID):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     files = models.FileField("file", upload_to=post_uploaded_files)
-
-    class Meta:
-        ordering = ("-created_at", )
