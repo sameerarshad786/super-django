@@ -85,7 +85,7 @@ class PostTest(MainSetup):
         }
         response = self.client.post(
             COMMENT_URL, payload,
-             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
+            HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
         )
         self.assertEqual(response.status_code, 201)
 
