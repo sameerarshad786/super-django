@@ -25,9 +25,6 @@ class Migration(migrations.Migration):
                 ('files', models.FileField(upload_to=post.models.post_model.post_uploaded_files, verbose_name='file')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-                'ordering': ('-created_at',),
-            },
             bases=('core.uuid',),
         ),
         migrations.CreateModel(
