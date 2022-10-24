@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from profiles.models.profile_model import Profile
+
 
 LOGIN_URL = reverse("login")
 
@@ -16,14 +18,14 @@ COMMENT_URL = reverse("comment-create")
 
 class MainSetup(TestCase):
     def setUp(self) -> None:
+        """User TestCases"""
         self.email = "testuser@paksocial.com"
         self.password = "testing321"
-        self.user = get_user_model().objects.create(
-            email=self.email
+        self.confirm_password = "testing321"
+        self.user = get_user_model().objects.create_user(
+            email=self.email, password=self.password
         )
         self.user.is_verified = True
-        self.user.set_password(self.password)
-        self.user.save()
 
         user_payload = {
             "email": self.email,
@@ -35,6 +37,10 @@ class MainSetup(TestCase):
         )
         user = get_user_model().objects.last()
         self.tokens = RefreshToken().for_user(user)
+
+        """Profile TestCase"""
+        if self.user.is_verified:
+            self.profile = Profile.objects.create(user=self.user)
 
         self.post = self.client.post(
             POST_URL, {"text": "my test post"},
