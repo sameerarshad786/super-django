@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -8,6 +7,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models.user_model import User
+from .main_setup import MainSetup
 
 
 REGISTER_URL = reverse("register")
@@ -18,17 +18,7 @@ PASSWORD_RESET = reverse("password-reset")
 PASSWORD_RESET_COMPLETE = reverse("password-reset-complete")
 
 
-class UserAuthenticationTest(TestCase):
-    def setUp(self) -> None:
-        self.email = "testuser@paksocial.com"
-        self.password = "testing321"
-        self.confirm_password = "testing321"
-        self.user = User.objects.create(
-            email=self.email
-        )
-        self.user.set_password(self.password)
-        self.user.save()
-
+class UserAuthenticationTest(MainSetup):
     def test_create_user_with_no_matched_password_fields(self):
         payload = {
             "email": self.email,
@@ -84,7 +74,6 @@ class UserAuthenticationTest(TestCase):
         self.assertEqual(res.status_code, 400)
 
     def test_user_login_failed_is_deactivate_by_admin(self):
-        self.user.is_verified = True
         self.user.is_deactivate_by_admin = True
         self.user.save()
         payload = {
@@ -107,7 +96,6 @@ class UserAuthenticationTest(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_verified_user_login(self):
-        self.user.is_verified = True
         self.user.save()
         payload = {
             "email": self.email,
@@ -119,9 +107,6 @@ class UserAuthenticationTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_verified_user_login_then_logout(self):
-        self.user.is_verified = True
-        self.user.save()
-
         payload = {
             "email": self.email,
             "password": self.password
@@ -142,9 +127,6 @@ class UserAuthenticationTest(TestCase):
         self.assertEqual(response.status_code, 204)
 
     def test_password_reset(self):
-        self.user.is_verified = True
-        self.user.save()
-
         payload = {
             "email": self.email
         }
@@ -155,9 +137,6 @@ class UserAuthenticationTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_password_reset_confirm(self):
-        self.user.is_verified = True
-        self.user.save()
-
         payload = {
             "email": self.email
         }
@@ -181,9 +160,6 @@ class UserAuthenticationTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_password_reset_complete(self):
-        self.user.is_verified = True
-        self.user.save()
-
         payload = {
             "email": self.email
         }
