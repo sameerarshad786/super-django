@@ -8,7 +8,9 @@ from post.models.postremark_model import PostRemark, Comments
 class PostRemarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostRemark
-        fields = ("id", "user", "on_post", "popularity", "updated", "created")
+        fields = (
+            "id", "user", "on_post", "popularity", "updated", "created"
+        )
         extra_kwargs = {
             "user": {"read_only": True}
         }
@@ -25,7 +27,8 @@ class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
         fields = (
-            "id", "user", "on_post", "comment", "files", "updated", "created"
+            "id", "user", "on_post", "parent", "comment", "files", "updated",
+            "created"
         )
         extra_kwargs = {
             "user": {"read_only": True}

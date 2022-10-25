@@ -14,6 +14,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
+        fields = "__all__"
         fields = (
             "id", "user", "text", "files", "like", "dislike",
             "current_user_like", "current_user_dislike", "popularities",
@@ -51,29 +52,36 @@ class PostSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_popularities(self, obj):
-        return PostRemark.objects.filter(
-            on_post=obj.id
-        ).values(
-            "user",
-            "user__profile",
-            "user__profile__username",
-            "user__profile__profile_image",
-            "popularity",
-            "created_at"
-        )
+        request = self.context["request"]
+        for remarks in PostRemark.objects.filter(on_post=obj.id):
+            return [{
+                "id": remarks.id,
+                "username": remarks.user.profile.username,
+                "profile_image": request.build_absolute_uri(
+                    remarks.user.profile.profile_image.url
+                ),
+                "on_post": obj.id,
+                "popularity": remarks.popularity,
+                "created": remarks.created(),
+                "updated": remarks.updated()
+            }]
 
     def get_comments(self, obj):
-        return Comments.objects.filter(on_post=obj).values(
-            "id",
-            "comment",
-            "files",
-            "user",
-            "user__profile",
-            "user__profile__username",
-            "user__profile__profile_image",
-            "created_at",
-            "updated_at"
-        )
+        request = self.context["request"]
+        for comment in Comments.objects.filter(on_post=obj):
+            return [{
+                "id": comment.id,
+                "username": comment.user.profile.username,
+                "profile_image": request.build_absolute_uri(
+                    comment.user.profile.profile_image.url
+                ),
+                "on_post": obj.id,
+                "comment": comment.comment,
+                "created": comment.created(),
+                "updated": comment.updated(),
+                "files": comment.files if comment.files else None,
+                "child": comment.parent
+            }]
 
     def create(self, validated_data):
         user = self.context["request"].user
