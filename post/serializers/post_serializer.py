@@ -17,8 +17,8 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
         fields = (
             "id", "user", "text", "files", "like", "dislike",
-            "current_user_like", "current_user_dislike", "popularities",
-            "comments", "created", "updated"
+            "current_user_like", "current_user_dislike",
+            "popularities", "comments", "created", "updated"
         )
         extra_kwargs = {
             "user": {"read_only": True},
@@ -68,9 +68,11 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         request = self.context["request"]
-        for comment in Comments.objects.filter(on_post=obj):
-            return [{
+        result = []
+        for comment in Comments.objects.filter(on_post=obj, parent=None):
+            result.append({
                 "id": comment.id,
+                "user": str(comment.user),
                 "username": comment.user.profile.username,
                 "profile_image": request.build_absolute_uri(
                     comment.user.profile.profile_image.url
@@ -79,9 +81,12 @@ class PostSerializer(serializers.ModelSerializer):
                 "comment": comment.comment,
                 "created": comment.created(),
                 "updated": comment.updated(),
-                "files": comment.files if comment.files else None,
-                "child": comment.parent
-            }]
+                "files": request.build_absolute_uri(
+                    comment.files.url) if comment.files else None,
+                "child_id": str(comment.parent),
+                "child": str(Comments.get_replies(comment))
+            })
+        return result
 
     def create(self, validated_data):
         user = self.context["request"].user
