@@ -72,7 +72,7 @@ class PostSerializer(serializers.ModelSerializer):
         for comment in Comments.objects.filter(on_post=obj, parent=None):
             result.append({
                 "id": comment.id,
-                "user": str(comment.user),
+                "user": comment.user.email,
                 "username": comment.user.profile.username,
                 "profile_image": request.build_absolute_uri(
                     comment.user.profile.profile_image.url
@@ -83,8 +83,6 @@ class PostSerializer(serializers.ModelSerializer):
                 "updated": comment.updated(),
                 "files": request.build_absolute_uri(
                     comment.files.url) if comment.files else None,
-                "child_id": str(comment.parent),
-                "child": str(Comments.get_replies(comment))
             })
         return result
 
