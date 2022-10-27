@@ -9,7 +9,8 @@ class PostRemarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostRemark
         fields = (
-            "id", "user", "on_post", "popularity", "updated", "created"
+            "id", "user", "on_post", "parent", "popularity",
+            "updated", "created"
         )
         extra_kwargs = {
             "user": {"read_only": True}
