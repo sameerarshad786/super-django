@@ -15,7 +15,7 @@ admin.site.register(Post, PostAdmin)
 
 class PostRemarkAdmin(admin.ModelAdmin):
     list_display = (
-        "id", "user", "on_post", "popularity", "created", "updated"
+        "id", "user", "on_post", "parent", "popularity", "created", "updated"
     )
 
 
