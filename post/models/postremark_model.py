@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from pak_social.settings import WEBSITE_URL
 
 from core.models.user_model import User
 from core.mixins import UUID
@@ -35,10 +36,15 @@ class Comments(UUID):
         for comment in Comments.objects.filter(parent=self):
             result.append({
                 "id": comment.id,
-                "user": comment.user,
-                "on_post": comment.on_post,
+                "user_id": comment.user.id,
+                "user": comment.user.email,
+                "username": comment.user.profile.username,
+                "profile_image": WEBSITE_URL + str(comment.user.profile.profile_image.url),
+                "on_post": comment.on_post.id,
                 "comment": comment.comment,
-                "files": comment.files,
-                "parent": Comments.get_replies(comment)
+                "files": WEBSITE_URL + str(comment.files.url) if comment.files else None,
+                "created": comment.created(),
+                "updated": comment.updated(),
+                "child": Comments.get_replies(comment)
             })
         return result
