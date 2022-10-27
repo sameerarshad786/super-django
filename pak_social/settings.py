@@ -36,6 +36,8 @@ DEBUG = int(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = ['*']
 
+WEBSITE_URL = "http://localhost:8000/"
+
 AUTH_USER_MODEL = 'core.User'
 
 # Application definition

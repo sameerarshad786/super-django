@@ -24,7 +24,7 @@ admin.site.register(PostRemark, PostRemarkAdmin)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
-        "id", "user", "on_post", "comment", "created", "updated"
+        "id", "user", "on_post", "parent", "comment", "created", "updated"
     )
 
 

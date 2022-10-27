@@ -24,8 +24,6 @@ POST_REMARKS_PATTERNS = [
 COMMENTS_PATTERNS = [
     path("create/", views.CommentCreateAPIView.as_view(),
          name="comment-create"),
-    path("comment/<uuid:pk>/", views.CommentRetrieveAPIView.as_view(),
-         name="comment-retrieve"),
     path("update/<str:pk>/", views.CommentUpdateAPIView.as_view(),
          name="comment-update"),
     path("delete/<str:pk>/", views.CommentDestroyAPIView.as_view(),
