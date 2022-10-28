@@ -1,2 +1,2 @@
 from .post_model import *
-from .postremark_model import *
+from .remarks_model import *

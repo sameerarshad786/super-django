@@ -1,2 +1,2 @@
 from .post_view import *
-from .postremark_view import *
+from .remarks_view import *

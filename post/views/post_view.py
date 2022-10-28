@@ -3,22 +3,11 @@ from rest_framework import generics, parsers
 from core.permissions import IsOwner
 from post.serializers.post_serializer import PostSerializer
 from post.models.post_model import Post
-from post.models.postremark_model import Comments, PostRemark
 
 
 class PostListAPIView(generics.ListAPIView):
     serializer_class = PostSerializer
-
-    def get_queryset(self):
-        for post in Post.objects.all():
-            if Comments.objects.filter(on_post=post.id):
-                if PostRemark.objects.filter(
-                    on_post=post.id, popularity="like"
-                ):
-                    return Post.objects.order_by(
-                        "-postremark", "-comments", "-updated_at"
-                    )
-            return Post.objects.order_by("-created_at")
+    queryset = Post.objects.all()
 
 
 class PostCreateAPIView(generics.CreateAPIView):

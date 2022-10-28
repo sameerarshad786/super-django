@@ -55,7 +55,7 @@ class PostTest(MainSetup):
             REMARK_URL, payload,
             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}"
         )
-        payload["popularity"] = "dislike"
+        payload["popularity"] = "heart"
         response = self.client.patch(
             reverse("remark-update", args=[_res.data.get("id")]), payload,
             HTTP_AUTHORIZATION=f"Bearer {self.tokens.access_token}",
