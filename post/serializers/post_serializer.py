@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
 from post.models.post_model import Post
-from post.models.remarks_model import Comments, PostRemarks, Popularity, CommentRemarks
+from post.models.remarks_model import (
+    Comments, PostRemarks, Popularity, CommentRemarks
+)
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -15,8 +17,8 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            "id", "user", "text", "files", "popularities",
-            "current_user_action", "created", "updated", "total_popularities",
+            "id", "user", "text", "files", "total_popularities",
+            "popularities", "current_user_action", "created", "updated",
             "popularity_details", "total_comments", "comments"
         )
         extra_kwargs = {
@@ -25,6 +27,11 @@ class PostSerializer(serializers.ModelSerializer):
             "text": {"required": False},
             "files": {"required": False}
         }
+
+    def get_total_popularities(self, obj):
+        return PostRemarks.objects.filter(
+            on_post=obj
+        ).count()
 
     def get_popularities(self, obj):
         likes = PostRemarks.objects.filter(
@@ -43,51 +50,18 @@ class PostSerializer(serializers.ModelSerializer):
             popularity=Popularity.DISAPPOINT, on_post=obj
         ).count()
 
-        result = {
+        return {
             "likes": likes,
             "hearts": hearts,
             "funny": funny,
             "insightful": insightful,
             "disappoint": disappoint
         }
-        return result
 
     def get_current_user_action(self, obj):
-        user = self.context["request"].user
-        like = PostRemarks.objects.filter(
-            popularity=Popularity.LIKE, on_post=obj,
-            user=user
-        ).exists()
-        heart = PostRemarks.objects.filter(
-            popularity=Popularity.HEART, on_post=obj,
-            user=user
-        ).exists()
-        funny = PostRemarks.objects.filter(
-            popularity=Popularity.FUNNY, on_post=obj,
-            user=user
-        ).exists()
-        insightful = PostRemarks.objects.filter(
-            popularity=Popularity.INSIGHTFUL, on_post=obj,
-            user=user
-        ).exists()
-        disappoint = PostRemarks.objects.filter(
-            popularity=Popularity.DISAPPOINT, on_post=obj,
-            user=user
-        ).exists()
-
-        result = {
-            "like": like,
-            "hearts": heart,
-            "funny": funny,
-            "insightful": insightful,
-            "disappoint": disappoint
-        }
-        return result
-
-    def get_total_popularities(self, obj):
         return PostRemarks.objects.filter(
-            on_post=obj
-        ).count()
+            on_post=obj, user=self.context["request"].user
+        ).values("popularity")
 
     def get_popularity_details(self, obj):
         request = self.context["request"]
@@ -113,10 +87,16 @@ class PostSerializer(serializers.ModelSerializer):
     def get_comments(self, obj):
         comments = Comments.objects.filter(on_post=obj, parent=None)
         request = self.context["request"]
-        result = []
+        result = {
+            "comment": [],
+            "popularities": []
+        }
         for comment in comments:
+            current_user_action = CommentRemarks.objects.filter(
+                on_post=obj, on_comment=comment, user=request.user
+            ).values("popularity")
             _remarks = CommentRemarks.objects.filter(on_comment=comment.id)
-            result.append({
+            result["comment"].append({
                 "id": comment.id,
                 "user_id": comment.user.id,
                 "user_email": comment.user.email,
@@ -131,21 +111,23 @@ class PostSerializer(serializers.ModelSerializer):
                 "created": comment.created(),
                 "updated": comment.updated(),
                 "total_popularities": _remarks.count(),
-                # "popularity_details": result["popularity_details"].append({
-                #     "id": remark.id,
-                #     "user_id": remark.user.id,
-                #     "user_email": remark.user.email,
-                #     "username": remark.user.profile.username,
-                #     "profile_image": request.build_absolute_uri(
-                #         remark.user.profile.profile_image.url
-                #     ) if remark.user.profile.profile_image else None,
-                #     "on_comment": comment.id,
-                #     "action": remark.popularity,
-                #     "created_at": remark.created(),
-                #     "updated_at": remark.updated()
-                # }),
+                "current_user_action": current_user_action,
                 "parent": Comments.get_replies(comment)
             })
+            for remark in _remarks:
+                result["popularities"].append({
+                    "id": remark.id,
+                    "user_id": remark.user.id,
+                    "user_email": remark.user.email,
+                    "username": remark.user.profile.username,
+                    "profile_image": request.build_absolute_uri(
+                        remark.user.profile.profile_image.url
+                    ) if remark.user.profile.profile_image else None,
+                    "on_comment": comment.id,
+                    "popularity": remark.popularity,
+                    "created_at": remark.created(),
+                    "updated_at": remark.updated()
+                }),
         return result
 
     def create(self, validated_data):

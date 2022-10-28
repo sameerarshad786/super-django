@@ -45,6 +45,17 @@ class CommentRemarksSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+        popularity = validated_data.get("popularity")
+        on_post = validated_data.get("on_post")
+        on_comment = validated_data.get("on_comment")
+        remark = CommentRemarks.objects.filter(
+            user=user, on_post=on_post, on_comment=on_comment
+        )
+        if remark:
+            if remark.filter(popularity=popularity).exists():
+                raise exceptions.ValidationError(_("Entry already exists"))
+            remark.delete()
+            return CommentRemarks.objects.create(user=user, **validated_data)
         return CommentRemarks.objects.create(user=user, **validated_data)
 
 
