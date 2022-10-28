@@ -11,17 +11,18 @@ def comment_media_path(instance, filename):
     return f"comments/{instance.id}/{filename}"
 
 
-class PostRemark(UUID):
-    class Popularity(models.TextChoices):
-        LIKE = ("like", _("LIKE"))
-        DISLIKE = ("dislike", _("DISLIKE"))
+class Popularity(models.TextChoices):
+    LIKE = ("like", _("LIKE"))
+    HEART = ("heart", _("HEART"))
+    FUNNY = ("funny", _("FUNNY"))
+    INSIGHTFUL = ("insightful", _("INSIGHTFUL"))
+    DISAPPOINT = ("disappoint", _("DISAPPOINT"))
 
+
+class PostRemarks(UUID):
     popularity = models.CharField(max_length=11, choices=Popularity.choices)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, blank=True, null=True
-    )
 
 
 class Comments(UUID):
@@ -36,6 +37,7 @@ class Comments(UUID):
     def get_replies(self):
         result = []
         for comment in Comments.objects.filter(parent=self):
+            _remarks = CommentRemarks.objects.filter(on_comment=comment.id)
             result.append({
                 "id": comment.id,
                 "user_id": comment.user.id,
@@ -51,6 +53,28 @@ class Comments(UUID):
                 ) if comment.files else None,
                 "created": comment.created(),
                 "updated": comment.updated(),
+                "total_popularities": _remarks.count(),
+                # "popularity_details": result["popularity_details"].append({
+                #     "id": remark.id,
+                #     "user_id": remark.user.id,
+                #     "user_email": remark.user.email,
+                #     "username": remark.user.profile.username,
+                #     "profile_image": WEBSITE_URL + str(
+                #         remark.user.profile.profile_image.url
+                #     ) if remark.user.profile.profile_image else None,
+                #     "on_comment": comment.id,
+                #     "on_post": comment.on_post.id,
+                #     "action": remark.popularity,
+                #     "created_at": remark.created(),
+                #     "updated_at": remark.updated()
+                # }),
                 "child": Comments.get_replies(comment)
             })
-            return result
+        return result
+
+
+class CommentRemarks(UUID):
+    popularity = models.CharField(max_length=11, choices=Popularity.choices)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    on_comment = models.ForeignKey(Comments, on_delete=models.CASCADE)

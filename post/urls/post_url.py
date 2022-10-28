@@ -21,6 +21,15 @@ POST_REMARKS_PATTERNS = [
          name="remark-destroy")
 ]
 
+COMMENT_REMARKS_PATTERNS = [
+    path("create/", views.CommentRemarksCreateAPIView.as_view(),
+         name="comment-remark-create"),
+    path("update/<str:pk>/", views.CommentRemarksUpdateAPIView.as_view(),
+         name="comment-remark-update"),
+    path("delete/<str:pk>/", views.CommentRemarksDestroyAPIView.as_view(),
+         name="comment-remark-destroy")
+]
+
 COMMENTS_PATTERNS = [
     path("create/", views.CommentCreateAPIView.as_view(),
          name="comment-create"),
