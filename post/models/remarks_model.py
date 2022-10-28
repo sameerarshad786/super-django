@@ -34,11 +34,15 @@ class Comments(UUID):
     comment = models.TextField(blank=True)
     files = models.FileField("file", upload_to=comment_media_path, blank=True)
 
-    def get_replies(self):
-        result = []
-        for comment in Comments.objects.filter(parent=self):
+    def get_replies(self, *args, **kwargs):
+        comments = Comments.objects.filter(parent=self)
+        result = {
+            "comment": [],
+            "popularities": []
+        }
+        for comment in comments:
             _remarks = CommentRemarks.objects.filter(on_comment=comment.id)
-            result.append({
+            result["comment"].append({
                 "id": comment.id,
                 "user_id": comment.user.id,
                 "user_email": comment.user.email,
@@ -54,22 +58,23 @@ class Comments(UUID):
                 "created": comment.created(),
                 "updated": comment.updated(),
                 "total_popularities": _remarks.count(),
-                # "popularity_details": result["popularity_details"].append({
-                #     "id": remark.id,
-                #     "user_id": remark.user.id,
-                #     "user_email": remark.user.email,
-                #     "username": remark.user.profile.username,
-                #     "profile_image": WEBSITE_URL + str(
-                #         remark.user.profile.profile_image.url
-                #     ) if remark.user.profile.profile_image else None,
-                #     "on_comment": comment.id,
-                #     "on_post": comment.on_post.id,
-                #     "action": remark.popularity,
-                #     "created_at": remark.created(),
-                #     "updated_at": remark.updated()
-                # }),
                 "child": Comments.get_replies(comment)
-            })
+                })
+            for remark in _remarks:
+                result["popularities"].append({
+                        "id": remark.id,
+                        "user_id": remark.user.id,
+                        "user_email": remark.user.email,
+                        "username": remark.user.profile.username,
+                        "profile_image": WEBSITE_URL + str(
+                            remark.user.profile.profile_image.url
+                        ) if remark.user.profile.profile_image else None,
+                        "on_comment": comment.id,
+                        "on_post": comment.on_post.id,
+                        "popularity": remark.popularity,
+                        "created_at": remark.created(),
+                        "updated_at": remark.updated()
+                    }),
         return result
 
 
