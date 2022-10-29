@@ -19,15 +19,53 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         profile_image = validated_data.get("profile_image")
-        cover_image = validated_data.get("cover_image")
         user_gender = validated_data.get("user_gender")
         if profile_image is None:
             if user_gender == Profile.Gender.MALE:
                 validated_data.update(profile_image="profile/male.png")
             elif user_gender == Profile.Gender.FEMALE:
                 validated_data.update(profile_image="profile/female.png")
+        return super().update(instance, validated_data)
 
-        if cover_image is None:
-            validated_data.update(cover_image="cover/default-cover.png")
+
+class ProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            "id", "user", "profile_image"
+        )
+        extra_kwargs = {
+            "user": {"read_only": True},
+            "profile_image": {"required": False}
+        }
+
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+        if instance.user_gender==Profile.Gender.MALE:
+            return Profile.objects.filter(user=user).update(
+                profile_image="profile/male.png"
+            )
+        elif instance.user_gender==Profile.Gender.FEMALE:
+            return Profile.objects.filter(user=user).update(
+                cover_image="profile/female.png"
+            )
 
         return super().update(instance, validated_data)
+
+
+class CoverImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            "id", "user", "cover_image"
+        )
+        extra_kwargs = {
+            "user": {"read_only": True},
+            "profile_image": {"required": False}
+        }
+
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+        return Profile.objects.filter(user=user).update(
+            cover_image="cover/default-cover.png"
+        )
