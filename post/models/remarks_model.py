@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from pak_social.settings import WEBSITE_URL
 
+from pak_social.settings import WEBSITE_URL
 from core.models.user_model import User
 from core.mixins import UUID
 from post.models.post_model import Post
@@ -42,6 +42,9 @@ class Comments(UUID):
         }
         for comment in comments:
             _remarks = CommentRemarks.objects.filter(on_comment=comment.id)
+            total_replies = Comments.objects.filter(
+                parent=comment.id
+            ).count()
             result["comment"].append({
                 "id": comment.id,
                 "user_id": comment.user.id,
@@ -58,6 +61,7 @@ class Comments(UUID):
                 "created": comment.created(),
                 "updated": comment.updated(),
                 "total_popularities": _remarks.count(),
+                "total_replies": total_replies,
                 "child": Comments.get_replies(comment)
                 })
             for remark in _remarks:

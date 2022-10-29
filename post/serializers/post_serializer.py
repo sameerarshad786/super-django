@@ -8,30 +8,21 @@ from post.models.remarks_model import (
 
 class PostSerializer(serializers.ModelSerializer):
     popularities = serializers.SerializerMethodField()
-    current_user_action = serializers.SerializerMethodField()
     popularity_details = serializers.SerializerMethodField()
-    total_popularities = serializers.SerializerMethodField()
     total_comments = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = (
-            "id", "user", "text", "files", "total_popularities",
-            "popularities", "current_user_action", "created", "updated",
-            "popularity_details", "total_comments", "comments"
+            "id", "user", "text", "files", "popularities", "created",
+            "updated", "popularity_details", "total_comments", "comments"
         )
         extra_kwargs = {
             "user": {"read_only": True},
-            "title": {"required": False},
             "text": {"required": False},
             "files": {"required": False}
         }
-
-    def get_total_popularities(self, obj):
-        return PostRemarks.objects.filter(
-            on_post=obj
-        ).count()
 
     def get_popularities(self, obj):
         likes = PostRemarks.objects.filter(
@@ -49,19 +40,23 @@ class PostSerializer(serializers.ModelSerializer):
         disappoint = PostRemarks.objects.filter(
             popularity=Popularity.DISAPPOINT, on_post=obj
         ).count()
+        total_popularities = PostRemarks.objects.filter(
+            on_post=obj
+        ).count()
+
+        current_user_action = PostRemarks.objects.filter(
+            on_post=obj, user=self.context["request"].user
+        ).values("popularity")
 
         return {
             "likes": likes,
             "hearts": hearts,
             "funny": funny,
             "insightful": insightful,
-            "disappoint": disappoint
+            "disappoint": disappoint,
+            "total_popularities": total_popularities,
+            "current_user_action": current_user_action
         }
-
-    def get_current_user_action(self, obj):
-        return PostRemarks.objects.filter(
-            on_post=obj, user=self.context["request"].user
-        ).values("popularity")
 
     def get_popularity_details(self, obj):
         request = self.context["request"]
@@ -92,10 +87,13 @@ class PostSerializer(serializers.ModelSerializer):
             "popularities": []
         }
         for comment in comments:
+            _remarks = CommentRemarks.objects.filter(on_comment=comment.id)
+            total_replies = Comments.objects.filter(
+                on_post=obj, parent=comment.id
+            ).count()
             current_user_action = CommentRemarks.objects.filter(
                 on_post=obj, on_comment=comment, user=request.user
             ).values("popularity")
-            _remarks = CommentRemarks.objects.filter(on_comment=comment.id)
             result["comment"].append({
                 "id": comment.id,
                 "user_id": comment.user.id,
@@ -112,6 +110,7 @@ class PostSerializer(serializers.ModelSerializer):
                 "updated": comment.updated(),
                 "total_popularities": _remarks.count(),
                 "current_user_action": current_user_action,
+                "total_replies": total_replies,
                 "parent": Comments.get_replies(comment)
             })
             for remark in _remarks:
