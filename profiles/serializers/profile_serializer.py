@@ -12,9 +12,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {
             "user": {"read_only": True},
-            "username": {"required": False},
             "about": {"required": False},
-            "profile_image": {"required": False},
+            "profile_image": {"required": False}
         }
 
     def update(self, instance, validated_data):
