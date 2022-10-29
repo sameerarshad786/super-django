@@ -40,11 +40,11 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
-        if instance.user_gender==Profile.Gender.MALE:
+        if instance.user_gender == Profile.Gender.MALE:
             return Profile.objects.filter(user=user).update(
                 profile_image="profile/male.png"
             )
-        elif instance.user_gender==Profile.Gender.FEMALE:
+        elif instance.user_gender == Profile.Gender.FEMALE:
             return Profile.objects.filter(user=user).update(
                 cover_image="profile/female.png"
             )
