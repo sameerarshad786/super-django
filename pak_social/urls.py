@@ -48,7 +48,13 @@ urlpatterns = [
     path('api/v1/developer/redoc/',
         schema_view.with_ui('redoc', cache_timeout=0),
         name='schema-redoc'
-    )
+    ),
+
+    # Third Party Application
+    path('api/v1/packages/', include('packages.urls')),
+
+    # 3rd Party Packages
+    path('friendship/', include('friendship.urls'))
 ]
 
 if settings.DEBUG:

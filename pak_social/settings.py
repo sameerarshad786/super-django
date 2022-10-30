@@ -57,8 +57,12 @@ INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'post.apps.PostConfig',
 
+    # Third Party Packages Application
+    'packages.apps.PackagesConfig',
+
     # 3rd Party Packages
     'phonenumber_field',
+    'friendship',
     'drf_yasg'
 ]
 
