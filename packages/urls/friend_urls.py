@@ -11,9 +11,9 @@ FRIEND_URL = [
          friend_views.ListFriendRequestAPIView.as_view(),
          name="all-friend-request"),
     path("accept-requests/",
-         friend_views.FriendRequestAcceptAPIView.as_view(),
+         friend_views.AcceptFriendRequestAPIView.as_view(),
          name="accept-request"),
-    path("retrieve-send-request/<int:pk>/",
-         friend_views.RetrieveFriendRequestAPIView.as_view(),
-         name="retrieve-friend-request")
+#     path("retrieve-send-request/<int:pk>/",
+#          friend_views.RetrieveFriendRequestAPIView.as_view(),
+#          name="retrieve-friend-request")
 ]
