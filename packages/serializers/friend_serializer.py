@@ -62,10 +62,7 @@ class FriendShipRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         from_user = self.context["request"].user
-        to_user = validated_data.get("to_user")
-        return FriendshipRequest.objects.create(
-            from_user=from_user, to_user=to_user
-        )
+        return Friend.objects.add_friend(from_user, **validated_data)
 
 
 class FriendsSerializer(serializers.ModelSerializer):
