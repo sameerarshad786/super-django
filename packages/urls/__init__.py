@@ -1,2 +1,2 @@
 from .urls import *
-from .friend_urls import *
+from .friendship_urls import *

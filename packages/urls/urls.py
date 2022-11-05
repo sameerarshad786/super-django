@@ -1,8 +1,8 @@
 from django.urls import path, include
 
-from .friend_urls import FRIEND_URL
+from .friendship_urls import FRIENDSHIP_URL
 
 
 urlpatterns = [
-    path("friend/", include(FRIEND_URL))
+    path("friendship/", include(FRIENDSHIP_URL)),
 ]
