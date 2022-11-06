@@ -42,5 +42,6 @@ class UnBlockUserAPIView(generics.DestroyAPIView):
             blocked_user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
-            {"message": "block list is empty"}, status=status.HTTP_200_OK
+            {"message": "you have not block this user"},
+            status=status.HTTP_200_OK
         )
