@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from friendship.models import FriendshipRequest, Friend
+from friendship.models import FriendshipRequest, Friend, Follow
 
 from ..serializers import (
     FriendShipRequestSerializer, FriendsSerializer
@@ -71,6 +71,9 @@ class AcceptFriendRequestAPIView(generics.CreateAPIView):
         )
         if friend_request.exists():
             for frnd_request in friend_request:
+                if not Follow.objects.followers(frnd_request.from_user):
+                    Follow.objects.add_follower(request.user, frnd_request.from_user)
+
                 frnd_request.accept()
                 return Response({"message": "Request Accepted"})
         return Response(

@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
-from friendship.models import FriendshipRequest, Friend
+from friendship.models import FriendshipRequest, Friend, Block, Follow
 
 
 class FriendShipRequestSerializer(serializers.ModelSerializer):
@@ -57,6 +57,15 @@ class FriendShipRequestSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(_(
                 "you both are already friends"
             ))
+
+        if Block.objects.filter(blocker=from_user, blocked=to_user):
+            raise serializers.ValidationError(_("you blocked this user"))
+
+        if Block.objects.filter(blocker=to_user, blocked=from_user):
+            raise serializers.ValidationError(_("user blocked you"))
+        
+        if not Follow.objects.filter(follower=from_user, followee=to_user):
+            Follow.objects.add_follower(from_user, to_user)
 
         return attrs
 
