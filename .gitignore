@@ -6,3 +6,5 @@ __pycache__
 manage.py
 
 .flake8
+
+media
