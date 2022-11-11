@@ -1,6 +1,6 @@
 .env
 
-db.sqlite3
+postgresql_db
 __pycache__
 
 manage.py
