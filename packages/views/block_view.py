@@ -2,29 +2,17 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from ..serializers import BlockUserSerializer
-from ..utils import get_timesince
 
 from friendship.models import Block
 
 
 class BlockedListAPIView(generics.ListAPIView):
     serializer_class = BlockUserSerializer
-    queryset = Block.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        blocked_users = Block.objects.filter(blocker=self.request.user)
-        result = []
-        for blocked_user in blocked_users:
-            result.append({
-                "id": blocked_user.id,
-                "user_id": blocked_user.blocked.id,
-                "username": blocked_user.blocked.profile.username,
-                "email": blocked_user.blocked.email,
-                "profile_image": request.build_absolute_uri(
-                    blocked_user.blocked.profile.profile_image.url),
-                "followed": get_timesince(blocked_user.created)
-            })
-        return Response(result)
+    def get_queryset(self):
+        return Block.objects.filter(
+            blocker=self.request.user
+        ).order_by("-created")
 
 
 class BlockUserAPIView(generics.CreateAPIView):
