@@ -24,6 +24,9 @@ class PostRemarkSerializer(serializers.ModelSerializer):
             user=user, on_post=on_post
         )
 
+        if not user.profile.username:
+            raise serializers.ValidationError(_("Update your profile first"))
+
         if remark:
             if remark.filter(popularity=popularity).exists():
                 raise exceptions.ValidationError(_("Entry already exists"))
@@ -51,6 +54,10 @@ class CommentRemarksSerializer(serializers.ModelSerializer):
         remark = CommentRemarks.objects.filter(
             user=user, on_post=on_post, on_comment=on_comment
         )
+
+        if not user.profile.username:
+            raise serializers.ValidationError(_("Update your profile first"))
+
         if remark:
             if remark.filter(popularity=popularity).exists():
                 raise exceptions.ValidationError(_("Entry already exists"))
@@ -72,4 +79,6 @@ class CommentsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+        if not user.profile.username:
+            raise serializers.ValidationError(_("Update your profile first"))
         return Comments.objects.create(user=user, **validated_data)

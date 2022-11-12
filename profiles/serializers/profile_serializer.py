@@ -7,7 +7,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = (
-            "id", "user", "username", "user_gender", "profile_image",
+            "id", "user", "username", "gender", "profile_image",
             "cover_image", "about", "phone_number", "skills", "education",
             "current_status", "is_private", "created", "updated"
         )
@@ -19,11 +19,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         profile_image = validated_data.get("profile_image")
-        user_gender = validated_data.get("user_gender")
+        gender = validated_data.get("gender")
         if profile_image is None:
-            if user_gender == Gender.MALE:
+            if gender == Gender.MALE:
                 validated_data.update(profile_image="profile/male.png")
-            elif user_gender == Gender.FEMALE:
+            elif gender == Gender.FEMALE:
                 validated_data.update(profile_image="profile/female.png")
         return super().update(instance, validated_data)
 
@@ -41,11 +41,11 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
-        if instance.user_gender == Gender.MALE:
+        if instance.gender == Gender.MALE:
             return Profile.objects.filter(user=user).update(
                 profile_image="profile/male.png"
             )
-        elif instance.user_gender == Gender.FEMALE:
+        elif instance.gender == Gender.FEMALE:
             return Profile.objects.filter(user=user).update(
                 cover_image="profile/female.png"
             )

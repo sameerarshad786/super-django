@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('uuid_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.uuid')),
-                ('user_gender', models.CharField(choices=[('male', 'Male'), ('female', 'Female')], max_length=10)),
+                ('gender', models.CharField(choices=[('male', 'Male'), ('female', 'Female')], max_length=10)),
                 ('username', models.CharField(max_length=15)),
                 ('profile_image', models.ImageField(upload_to=profiles.models.profile_model.profile_photo_path)),
                 ('cover_image', models.ImageField(default='cover/default.png', upload_to=profiles.models.profile_model.cover_photo_path)),
