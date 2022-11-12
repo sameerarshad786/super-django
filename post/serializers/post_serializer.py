@@ -1,3 +1,5 @@
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
 from post.models.post_model import Post
@@ -69,7 +71,7 @@ class PostSerializer(serializers.ModelSerializer):
                 "username": remarks.user.profile.username,
                 "profile_image": request.build_absolute_uri(
                     remarks.user.profile.profile_image.url
-                ) if remarks.user.profile.profile_image else None,
+                ),
                 "on_post": obj.id,
                 "created": remarks.created(),
                 "updated": remarks.updated(),
@@ -101,7 +103,7 @@ class PostSerializer(serializers.ModelSerializer):
                 "username": comment.user.profile.username,
                 "profile_image": request.build_absolute_uri(
                     comment.user.profile.profile_image.url
-                ) if comment.user.profile.profile_image else None,
+                ),
                 "on_post": obj.id,
                 "comment": comment.comment,
                 "files": request.build_absolute_uri(
@@ -121,7 +123,7 @@ class PostSerializer(serializers.ModelSerializer):
                     "username": remark.user.profile.username,
                     "profile_image": request.build_absolute_uri(
                         remark.user.profile.profile_image.url
-                    ) if remark.user.profile.profile_image else None,
+                    ),
                     "on_comment": comment.id,
                     "popularity": remark.popularity,
                     "created_at": remark.created(),
@@ -131,4 +133,6 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+        if not user.profile.username:
+            raise serializers.ValidationError(_("Update your profile first"))
         return Post.objects.create(user=user, **validated_data)
