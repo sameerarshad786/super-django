@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     # My App
     'core.apps.CoreConfig',
     'profiles.apps.ProfilesConfig',
-    'post.apps.PostConfig',
+    'feeds.apps.FeedsConfig',
 
     # Third Party Packages Application
     'packages.apps.PackagesConfig',
@@ -103,7 +103,7 @@ WSGI_APPLICATION = 'pak_social.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pak_social',
+        'NAME': 'paksocial',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',

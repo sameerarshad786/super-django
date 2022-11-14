@@ -1,0 +1,24 @@
+from django.db import models
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
+
+from .feeds_model import Feeds
+from .comments_model import Comments
+from core.mixins import UUID
+
+
+class Popularity(models.TextChoices):
+    LIKE = ("like", _("LIKE"))
+    HEART = ("heart", _("HEART"))
+    FUNNY = ("funny", _("FUNNY"))
+    INSIGHTFUL = ("insightful", _("INSIGHTFUL"))
+    DISAPPOINT = ("disappoint", _("DISAPPOINT"))
+
+
+class Remarks(UUID):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    on_post = models.ForeignKey(Feeds, on_delete=models.CASCADE)
+    on_comment = models.ForeignKey(
+        Comments, on_delete=models.SET_NULL, blank=True, null=True
+    )
+    popularity = models.CharField(max_length=11, choices=Popularity.choices)
