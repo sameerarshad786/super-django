@@ -38,7 +38,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/core/', include('core.urls')),
-    path('api/v1/post/', include('post.urls')),
+    path('api/v1/feeds/', include('feeds.urls')),
     path('api/v1/profile/', include('profiles.urls')),
     path(
         'api/v1/developer/swagger/',
