@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from friendship.models import Block, Friend, Follow, FriendshipRequest
 
-from ..utils import get_timesince
+from core.tasks import get_timesince
 
 
 class BlockUserSerializer(serializers.ModelSerializer):
