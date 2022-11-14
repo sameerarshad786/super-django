@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from friendship.models import FriendshipRequest, Friend, Block, Follow
-from ..utils import get_timesince
+from core.tasks import get_timesince
 
 
 class FriendShipRequestSerializer(serializers.ModelSerializer):
