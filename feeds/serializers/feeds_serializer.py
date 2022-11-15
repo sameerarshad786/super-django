@@ -18,6 +18,7 @@ class FeedSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         _comments = []
         popularity_details = []
+        feed_remarks = []
         data = dict()
 
         # post remarks
@@ -35,10 +36,20 @@ class FeedSerializer(serializers.ModelSerializer):
         total_comments = Comments.objects.filter(on_post=instance)
         current_user_commented = total_comments.filter(user=request.user)
 
-        feed_popularity_details = post_remarks.values(
-            "id", "user_id", "user__email", "user__profile__username",
-            "user__profile__profile_image", "popularity"
-        )
+        for remark in post_remarks:
+            feed_remarks.append({
+                "id": remark.id,
+                "user_id": remark.user.id,
+                "username": remark.user.profile.username,
+                "email": remark.user.email,
+                "profile_image": request.build_absolute_uri(
+                    remark.user.profile.profile_image.url
+                ),
+                "on_post": remark.on_post.id,
+                "popularity": remark.popularity,
+                "created": remark.created(),
+                "updated": remark.updated()
+            })
 
         # post
         data["id"] = instance.id
@@ -63,7 +74,7 @@ class FeedSerializer(serializers.ModelSerializer):
             "insightful": insightful.count(),
             "disappoint": disappoint.count()
         }
-        data["popularity_details"] = feed_popularity_details
+        data["popularity_details"] = feed_remarks
         data["current_user_commented"] = current_user_commented.exists()
         data["total_comments"] = total_comments.count()
         data["comments"] = _comments

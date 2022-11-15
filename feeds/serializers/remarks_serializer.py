@@ -11,7 +11,8 @@ class RemarkSerializer(serializers.ModelSerializer):
             "created", "updated"
         )
         extra_kwargs = {
-            "user": {"read_only": True}
+            "user": {"read_only": True},
+            "on_comment": {"required": False}
         }
 
     def create(self, validated_data):

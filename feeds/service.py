@@ -63,8 +63,8 @@ def get_replies(self: Comments, request):
                 "on_comment": comment.id,
                 "on_post": comment.on_post.id,
                 "popularity": remark.popularity,
-                "created_at": remark.created(),
-                "updated_at": remark.updated()
+                "created": remark.created(),
+                "updated": remark.updated()
             }),
 
     return _comments
