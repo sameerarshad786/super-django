@@ -1,3 +1,5 @@
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
 from profiles.models.profile_model import Profile, Gender
@@ -14,14 +16,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {
             "user": {"read_only": True},
+            "username": {"required": False},
             "about": {"required": False},
             "profile_image": {"required": False},
             "profession": {"required": False}
         }
 
     def update(self, instance, validated_data):
+        request = self.context["request"]
         profile_image = validated_data.get("profile_image")
         gender = validated_data.get("gender")
+        if instance.username == "" and request.data.get("username") is None:
+            raise serializers.ValidationError(_("user should have username"))
         if profile_image is None:
             if gender == Gender.MALE:
                 validated_data.update(profile_image="profile/male.png")
