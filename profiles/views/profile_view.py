@@ -19,27 +19,31 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
         data["id"] = profile.id
         data["user_id"] = profile.user.id
         data["username"] = profile.username
-        if not profile.is_private:
-            data["email"] = profile.user.email
-            data["gender"] = profile.gender
-            data["profile_image"] = request.build_absolute_uri(
-                profile.profile_image.url
-            ) if profile.profile_image else None
-            data["cover_image"] = request.build_absolute_uri(
-                profile.cover_image.url
-            ) if profile.cover_image else None
-            data["phone_number"] = profile.phone_number
-            data["about"] = profile.about
-            data["skills"] = profile.skills
-            data["education"] = profile.education
-            data["current_status"] = profile.current_status
-            data["created"] = profile.created()
-            data["updated"] = profile.updated()
-            data["joined"] = profile.user.joined()
-            data["user updated"] = profile.user.updated()
+        data["email"] = profile.user.email
+        data["gender"] = profile.gender
+        data["profile_image"] = request.build_absolute_uri(
+            profile.profile_image.url
+        ) if profile.profile_image else None
+        data["cover_image"] = request.build_absolute_uri(
+            profile.cover_image.url
+        ) if profile.cover_image else None
+        data["phone_number"] = profile.phone_number
+        data["about"] = profile.about
+        data["skills"] = profile.skills
+        data["education"] = profile.education
+        data["current_status"] = profile.current_status
+        data["created"] = profile.created()
+        data["updated"] = profile.updated()
+        data["joined"] = profile.user.joined()
+        data["user updated"] = profile.user.updated()
+        if not profile.is_private or profile.user == request.user:
             return Response(data, status=status.HTTP_200_OK)
         return Response(
-            {"data": data, "message": "profile is private"}, status=status.HTTP_200_OK
+            {
+                "id": data["id"], "user_id": data["user_id"],
+                "username": data["username"], "message": "profile is private"
+            },
+            status=status.HTTP_200_OK
         )
 
 
