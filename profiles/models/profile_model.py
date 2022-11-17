@@ -38,6 +38,13 @@ class CurrentStatus(models.TextChoices):
     WIDOWER = "widower", _("Widower")
 
 
+class EmploymentStatus(models.TextChoices):
+    STUDENT = "student", _("Student")
+    WORKER = "worker", _("worker")
+    EMPLOYEE = "employee", _("Employee")
+    SELFEMPLOYED = "self-employed", _("Self-Employed")
+
+
 class Profile(UUID):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.CharField(max_length=10, choices=Gender.choices)
@@ -48,6 +55,7 @@ class Profile(UUID):
     )
     phone_number = PhoneNumberField(blank=True)
     about = models.TextField()
+    is_private = models.BooleanField(default=False)
     skills = ArrayField(
         models.CharField(max_length=255), size=5, blank=True, null=True
     )
@@ -57,4 +65,7 @@ class Profile(UUID):
     current_status = models.CharField(
         max_length=18, choices=CurrentStatus.choices, blank=True, null=True
     )
-    is_private = models.BooleanField(default=False)
+    employment_status = models.CharField(
+        max_length=26, choices=EmploymentStatus.choices, blank=True, null=True
+    )
+    profession = models.CharField(max_length=100)

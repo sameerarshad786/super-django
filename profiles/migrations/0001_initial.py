@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('gender', models.CharField(choices=[('male', 'Male'), ('female', 'Female')], max_length=10)),
                 ('username', models.CharField(max_length=15)),
                 ('profile_image', models.ImageField(upload_to=profiles.models.profile_model.profile_photo_path)),
-                ('cover_image', models.ImageField(default='cover/default.png', upload_to=profiles.models.profile_model.cover_photo_path)),
+                ('cover_image', models.ImageField(default='cover/default-cover.png', upload_to=profiles.models.profile_model.cover_photo_path)),
                 ('phone_number', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, region=None)),
                 ('about', models.TextField()),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
