@@ -1,6 +1,7 @@
 import json
 
 from urllib.request import urlopen
+from geopy.geocoders import Nominatim
 
 
 def get_location(request):
@@ -9,4 +10,8 @@ def get_location(request):
     with urlopen(url) as response:
         response_content = response.read()
     address = json.loads(response_content)
-    return address
+    city = address.get("city")
+    loc = Nominatim(user_agent="GetLoc")
+    getLoc = loc.geocode(city)
+    lang_loc = {"location": getLoc.address}
+    return address, lang_loc
