@@ -18,9 +18,6 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
         data = dict()
         profile = Profile.objects.get(id=kwargs["pk"])
         location = get_location(request)
-        country = location.get("country")
-        city = location.get("city")
-        region = location.get("region")
         data["id"] = profile.id
         data["user_id"] = profile.user.id
         data["username"] = profile.username
@@ -37,9 +34,7 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
         data["skills"] = profile.skills
         data["education"] = profile.education
         data["current_status"] = profile.current_status
-        data["city"] = city
-        data["country"] = country
-        data["region"] = region
+        data["address"] = location
         data["created"] = profile.created()
         data["updated"] = profile.updated()
         data["joined"] = profile.user.joined()
