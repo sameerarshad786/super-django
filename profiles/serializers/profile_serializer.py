@@ -23,10 +23,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        request = self.context["request"]
         profile_image = validated_data.get("profile_image")
         gender = validated_data.get("gender")
-        if instance.username == "" and request.data.get("username") is None:
+        if instance.username == "" and validated_data.get("username") is None:
             raise serializers.ValidationError(_("user should have username"))
         if profile_image is None:
             if gender == Gender.MALE:
