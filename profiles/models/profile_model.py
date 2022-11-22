@@ -2,10 +2,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.fields import ArrayField
 
-from phonenumber_field.modelfields import PhoneNumberField
-
 from core.mixins import UUID
 from core.models.user_model import User
+
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 def profile_photo_path(instance, filename):
@@ -69,3 +69,4 @@ class Profile(UUID):
         max_length=26, choices=EmploymentStatus.choices, blank=True, null=True
     )
     profession = models.CharField(max_length=100)
+    location = models.JSONField(blank=True, null=True)
