@@ -42,4 +42,9 @@ class Migration(migrations.Migration):
             name='skills',
             field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=255), blank=True, null=True, size=5),
         ),
+        migrations.AddField(
+            model_name='profile',
+            name='location',
+            field=models.JSONField(blank=True, null=True),
+        ),
     ]
