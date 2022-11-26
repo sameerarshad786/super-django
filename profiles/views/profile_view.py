@@ -2,7 +2,6 @@ from django.db.models import F, Value, Q, Case, When
 from django.db.models.functions import Concat, JSONObject
 from django.db import models
 from django.conf import settings
-from django.db import connection
 
 from rest_framework import generics, parsers, status
 from rest_framework.response import Response
@@ -12,7 +11,6 @@ from profiles.serializers.profile_serializer import (
 )
 from profiles.models.profile_model import Profile
 from core.permissions import IsOwner
-
 
 
 class ProfileRetrieveAPIView(generics.RetrieveAPIView):
@@ -35,7 +33,8 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
         ).annotate(
             private_profile=Case(
                 When(
-                    Q(is_private=True) & ~Q(user=request.user), then=JSONObject(
+                    Q(is_private=True) & ~Q(user=request.user),
+                    then=JSONObject(
                         id=F("id"),
                         user_id=F("user_id"),
                         profile_picture=F("profile_picture"),
@@ -46,7 +45,8 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
             ),
             public_profile=Case(
                 When(
-                    Q(is_private=False) | Q(user=request.user), then=JSONObject(
+                    Q(is_private=False) | Q(user=request.user),
+                    then=JSONObject(
                         id=F("id"),
                         user_id=F("user_id"),
                         username=F("username"),
@@ -65,7 +65,6 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
                 ), output_field=models.JSONField()
             )
         ).values("private_profile", "public_profile")
-        print(len(connection.queries))
         return Response(profile, status=status.HTTP_200_OK)
 
 
