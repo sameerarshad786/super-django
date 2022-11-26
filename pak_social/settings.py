@@ -36,7 +36,7 @@ DEBUG = int(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = ['*']
 
-WEBSITE_URL = "http://localhost:8000/"
+MEDIA_BUCKET_URL = "http://localhost:8000/media/"
 
 AUTH_USER_MODEL = 'core.User'
 
@@ -167,7 +167,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'NON_FIELD_ERRORS_KEY': 'errors',
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 # Authentication for active and non active users
