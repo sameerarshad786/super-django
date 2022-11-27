@@ -1,5 +1,5 @@
 from django.db.models import F, Value, Q, Case, When
-from django.db.models.functions import Concat, JSONObject
+from django.db.models.functions import Now, Concat, JSONObject
 from django.db import models
 from django.conf import settings
 
@@ -11,6 +11,7 @@ from profiles.serializers.profile_serializer import (
 )
 from profiles.models.profile_model import Profile
 from core.permissions import IsOwner
+from core.tasks.timesince_calculations import created_, updated_
 
 
 class ProfileRetrieveAPIView(generics.RetrieveAPIView):
@@ -31,6 +32,8 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
                 output_field=models.URLField()
             ),
         ).annotate(
+            created=Now() - F("created_at"),
+            updated=Now() - F("updated_at"),
             private_profile=Case(
                 When(
                     Q(is_private=True) & ~Q(user=request.user),
@@ -60,7 +63,9 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
                         current_status=F("current_status"),
                         employment_status=F("employment_status"),
                         profession=F("profession"),
-                        location=F("location")
+                        location=F("location"),
+                        created=created_,
+                        updated=updated_
                     )
                 ), output_field=models.JSONField()
             )
