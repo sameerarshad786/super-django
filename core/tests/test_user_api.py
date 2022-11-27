@@ -1,3 +1,4 @@
+from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -7,7 +8,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models.user_model import User
-from .main_setup import MainSetup
 
 
 REGISTER_URL = reverse("register")
@@ -18,7 +18,16 @@ PASSWORD_RESET = reverse("password-reset")
 PASSWORD_RESET_COMPLETE = reverse("password-reset-complete")
 
 
-class UserAuthenticationTest(MainSetup):
+class UserAuthenticationTest(TestCase):
+    def setUp(self) -> None:
+        self.email = "testuser@paksocial.com"
+        self.password = "testing321"
+        self.confirm_password = "testing321"
+        self.user = get_user_model().objects.create_user(
+            email=self.email, password=self.password
+        )
+        self.user.is_verified = True
+
     def test_create_user_with_no_matched_password_fields(self):
         payload = {
             "email": self.email,
