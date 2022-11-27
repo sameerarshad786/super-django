@@ -37,6 +37,7 @@ DEBUG = int(os.getenv('DEBUG'))
 ALLOWED_HOSTS = ['*']
 
 MEDIA_BUCKET_URL = "http://localhost:8000/media/"
+PROFILE_URL = "http://localhost:8000/api/v1/profile/detail/"
 
 AUTH_USER_MODEL = 'core.User'
 
