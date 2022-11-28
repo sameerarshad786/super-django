@@ -1,7 +1,6 @@
-from django.db.models import F, Value, Q, Case, When
-from django.db.models.functions import Now, Concat, JSONObject
+from django.db.models import F, Q, Case, When
+from django.db.models.functions import Now, JSONObject
 from django.db import models
-from django.conf import settings
 
 from rest_framework import generics, parsers, status
 from rest_framework.response import Response
@@ -11,26 +10,19 @@ from profiles.serializers.profile_serializer import (
 )
 from profiles.models.profile_model import Profile
 from core.permissions import IsOwner
-from core.tasks.timesince_calculations import created_, updated_
+from core.tasks.querysets import (
+    created_, updated_, profile_picture, cover_picture
+)
 
 
 class ProfileRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
 
     def get(self, request, *args, **kwargs):
-        profile = Profile.objects.filter(id=kwargs["pk"]).select_related(
-            "user"
-        ).annotate(
-            profile_picture=Concat(
-                Value(settings.MEDIA_BUCKET_URL),
-                F("profile_image"),
-                output_field=models.URLField()
-            ),
-            cover_picture=Concat(
-                Value(settings.MEDIA_BUCKET_URL),
-                F("cover_image"),
-                output_field=models.URLField()
-            ),
+        profile = self.queryset.filter(id=kwargs["pk"]).annotate(
+            profile_picture=profile_picture,
+            cover_picture=cover_picture
         ).annotate(
             created=Now() - F("created_at"),
             updated=Now() - F("updated_at"),
