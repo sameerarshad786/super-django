@@ -4,8 +4,6 @@ from rest_framework import serializers
 
 from friendship.models import Follow, Block
 
-from core.tasks.timesince_calculations import get_timesince
-
 
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,27 +13,6 @@ class FollowSerializer(serializers.ModelSerializer):
             "follower": {"read_only": True},
             "created": {"read_only": True}
         }
-
-    def to_representation(self, instance):
-        request = self.context["request"]
-        data = dict()
-        data["id"] = instance.id
-        if instance.followee == request.user:
-            data["user_id"] = instance.follower.id
-            data["username"] = instance.follower.profile.username
-            data["email"] = instance.follower.email
-            data["profile_image"] = request.build_absolute_uri(
-                instance.follower.profile.profile_image.url
-            )
-        elif instance.follower == request.user:
-            data["user_id"] = instance.followee.id
-            data["username"] = instance.followee.profile.username
-            data["email"] = instance.followee.email
-            data["profile_image"] = request.build_absolute_uri(
-                instance.followee.profile.profile_image.url
-            )
-        data["created"] = get_timesince(instance.created)
-        return data
 
     def validate(self, attrs):
         follower = self.context["request"].user

@@ -1,3 +1,9 @@
+from django.db.models import Value, F
+from django.db.models.functions import Concat, Now
+from django.db import models
+from django.conf import settings
+from django.db import connection
+
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -6,6 +12,7 @@ from friendship.models import FriendshipRequest, Friend, Follow
 from ..serializers import (
     FriendShipRequestSerializer, FriendsSerializer
 )
+from ..tasks.querysets import created_
 
 
 class SendFriendRequestAPIView(generics.CreateAPIView):
@@ -15,20 +22,54 @@ class SendFriendRequestAPIView(generics.CreateAPIView):
 
 class RecievedRequestAPIView(generics.ListAPIView):
     serializer_class = FriendShipRequestSerializer
+    queryset = FriendshipRequest.objects.all()
 
-    def get_queryset(self):
-        return FriendshipRequest.objects.filter(
-            to_user=self.request.user
-        ).order_by("-created")
+    def get(self, request, *args, **kwargs):
+        friendrequests = self.queryset.filter(to_user=request.user).annotate(
+            profile_picture=Concat(
+                Value(settings.MEDIA_BUCKET_URL),
+                F("from_user__profile__profile_image"),
+                output_field=models.URLField()
+            ),
+            profile_link=Concat(
+                Value(settings.PROFILE_URL),
+                F("from_user__profile__id"),
+                output_field=models.URLField()
+            )
+        ).annotate(
+            created_at=Now() - F("created"), recieved=created_
+        ).values(
+            "id", "from_user", "from_user__profile__username",
+            "profile_picture", "profile_link", "recieved"
+        )
+        print(len(connection.queries))
+        return Response(friendrequests, status=status.HTTP_200_OK)
 
 
 class SentRequestsAPIView(generics.ListAPIView):
     serializer_class = FriendShipRequestSerializer
+    queryset = FriendshipRequest.objects.all()
 
-    def get_queryset(self):
-        return FriendshipRequest.objects.filter(
-            from_user=self.request.user
-        ).order_by("-created")
+    def get(self, request, *args, **kwargs):
+        qs = self.queryset.filter(from_user=request.user).annotate(
+            profile_picture=Concat(
+                Value(settings.MEDIA_BUCKET_URL),
+                F("to_user__profile__profile_image"),
+                output_field=models.URLField()
+            ),
+            profile_link=Concat(
+                Value(settings.PROFILE_URL),
+                F("to_user__profile__id"),
+                output_field=models.URLField()
+            )
+        ).annotate(
+            created_at=Now() - F("created"),
+            recieved=created_
+        ).values(
+            "id", "to_user", "to_user__profile__username",
+            "profile_picture", "profile_link", "recieved"
+        )
+        return Response(qs)
 
 
 class AcceptFriendRequestAPIView(generics.CreateAPIView):
@@ -73,11 +114,28 @@ class CancelFriendRequestAPIView(generics.DestroyAPIView):
 
 class AllFriendListAPIView(generics.ListAPIView):
     serializer_class = FriendsSerializer
+    queryset = Friend.objects.all()
 
-    def get_queryset(self):
-        return Friend.objects.filter(
-            from_user=self.request.user
-        ).order_by("-created")
+    def get(self, request, *args, **kwargs):
+        friends = self.queryset.filter(to_user=request.user).annotate(
+            profile_picture=Concat(
+                Value(settings.MEDIA_BUCKET_URL),
+                F("to_user__profile__profile_image"),
+                output_field=models.URLField()
+            ),
+            profile_link=Concat(
+                Value(settings.PROFILE_URL),
+                F("to_user__profile__id"),
+                output_field=models.URLField()
+            )
+        ).annotate(
+            created_at=Now() - F("created"),
+            friends=created_
+        ).values(
+            "id", "from_user", "from_user__profile__username",
+            "profile_picture", "profile_link", "friends"
+        )
+        return Response(friends)
 
 
 class UnFriendAPIView(generics.DestroyAPIView):
