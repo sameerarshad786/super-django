@@ -1,10 +1,8 @@
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 
 from rest_framework import serializers
 
 from friendship.models import FriendshipRequest, Friend, Block, Follow
-from core.tasks.timesince_calculations import get_timesince
 
 
 class FriendShipRequestSerializer(serializers.ModelSerializer):
@@ -20,31 +18,6 @@ class FriendShipRequestSerializer(serializers.ModelSerializer):
             "viewed": {"read_only": True},
             "created": {"read_only": True}
         }
-
-    def to_representation(self, instance):
-        request = self.context["request"]
-        data = dict()
-        data["id"] = instance.id
-        if instance.from_user == request.user:
-            data["user_id"] = instance.to_user.id
-            data["username"] = instance.to_user.profile.username
-            data["email"] = instance.to_user.email
-            data["profile_image"] = request.build_absolute_uri(
-                instance.to_user.profile.profile_image.url
-            )
-            data["viewed"] = get_timesince(
-                instance.viewed) if instance.viewed else None
-        elif instance.to_user == request.user:
-            data["user_id"] = instance.from_user.id
-            data["username"] = instance.from_user.profile.username
-            data["email"] = instance.from_user.email
-            data["profile_image"] = request.build_absolute_uri(
-                instance.from_user.profile.profile_image.url
-            )
-            if instance.viewed is None:
-                FriendshipRequest.objects.update(viewed=timezone.now())
-        data["send"] = get_timesince(instance.created)
-        return data
 
     def validate(self, attrs):
         from_user = self.context["request"].user
@@ -96,15 +69,3 @@ class FriendsSerializer(serializers.ModelSerializer):
         fields = (
             "id", "from_user", "to_user", "created"
         )
-
-    def to_representation(self, instance):
-        user = self.context["request"].user
-        data = dict()
-        if instance.from_user == user:
-            data["id"] = instance.id
-            data["user_id"] = instance.to_user.id
-            data["username"] = instance.to_user.profile.username
-            data["email"] = instance.to_user.email
-            data["profile_image"] = instance.to_user.profile.profile_image.url
-            data["created"] = get_timesince(instance.created)
-        return data
