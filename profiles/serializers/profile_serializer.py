@@ -28,6 +28,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         profile_image = validated_data.get("profile_image")
         gender = validated_data.get("gender")
+        if " " in validated_data.get("username"):
+            raise serializers.ValidationError(_("remove spaces from username"))
         if instance.location is None:
             validated_data.update(location=get_location(request))
         if instance.username == "" and validated_data.get("username") is None:

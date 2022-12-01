@@ -47,4 +47,19 @@ class Migration(migrations.Migration):
             name='location',
             field=models.JSONField(blank=True, null=True),
         ),
+        migrations.AddField(
+            model_name='profile',
+            name='first_name',
+            field=models.CharField(blank=True, max_length=25, null=True),
+        ),
+        migrations.AddField(
+            model_name='profile',
+            name='last_name',
+            field=models.CharField(blank=True, max_length=25, null=True),
+        ),
+        migrations.AlterField(
+            model_name='profile',
+            name='username',
+            field=models.CharField(max_length=255, unique=True),
+        ),
     ]

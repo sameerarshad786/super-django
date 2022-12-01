@@ -48,7 +48,9 @@ class EmploymentStatus(models.TextChoices):
 class Profile(UUID):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.CharField(max_length=10, choices=Gender.choices)
-    username = models.CharField(max_length=15)
+    username = models.CharField(max_length=255, unique=True)
+    first_name = models.CharField(max_length=25, blank=True, null=True)
+    last_name = models.CharField(max_length=25, blank=True, null=True)
     profile_image = models.ImageField(upload_to=profile_photo_path)
     cover_image = models.ImageField(
         upload_to=cover_photo_path, default="cover/default-cover.png"
