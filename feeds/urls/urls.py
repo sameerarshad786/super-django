@@ -6,10 +6,6 @@ from ..views import feeds_view, comments_view, remarks_view
 FEEDS_API_VIEW = [
     path("", feeds_view.FeedsAPIView.as_view(), name="feeds-list"),
     path(
-        "detail/<str:pk>/", feeds_view.FeedsRetrieveAPIView.as_view(),
-        name="feeds-retrieve"
-    ),
-    path(
         "create/", feeds_view.FeedsCreateAPIView.as_view(),
         name="feeds-create"
     ),
@@ -25,7 +21,13 @@ FEEDS_API_VIEW = [
 
 COMMENTS_API_VIEW = [
     path(
-        "detail/<str:pk>/", comments_view.CommentsRetrieveAPIView.as_view(),
+        "detail/<uuid:on_post_id>/",
+        comments_view.PostCommentsRetrieveAPIView.as_view(),
+        name="post-comments-retrieve"
+    ),
+    path(
+        "comments-detail/<str:pk>/",
+        comments_view.OnCommentsRetrieveAPIView.as_view(),
         name="comments-retrieve"
     ),
     path(
@@ -44,6 +46,16 @@ COMMENTS_API_VIEW = [
 
 
 REMARKS_API_VIEW = [
+    path(
+        "post-remarks/<uuid:on_post_id>",
+        remarks_view.PostRemarksRetrieveAPIView.as_view(),
+        name="post-remarks"
+    ),
+    path(
+        "comment-remarks/<uuid:on_comment_id>",
+        remarks_view.CommentRemarksRetrieveAPIView.as_view(),
+        name="comment-remarks"
+    ),
     path(
         "create/", remarks_view.RemarksCreateAPIView.as_view(),
         name="remarks-create"
