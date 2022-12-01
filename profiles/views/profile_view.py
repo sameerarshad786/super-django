@@ -20,7 +20,7 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Profile.objects.all()
 
     def get(self, request, *args, **kwargs):
-        profile = self.queryset.filter(id=kwargs["pk"]).annotate(
+        profile = self.queryset.filter(username=kwargs["username"]).annotate(
             profile_picture=profile_picture,
             cover_picture=cover_picture
         ).annotate(
