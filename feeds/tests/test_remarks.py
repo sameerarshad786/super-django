@@ -24,7 +24,7 @@ class FeedTest(TestCase):
         user = get_user_model().objects.last()
         self.tokens = RefreshToken().for_user(user)
         self.profile = Profile.objects.create(
-            user=self.user, username="test user",
+            user=self.user, username="testuser",
             gender=Gender.MALE, profile_image="profile/male.png"
         )
         self.auth_headers = {
