@@ -12,12 +12,14 @@ from ..service.querysets import created_
 from friendship.models import Follow
 
 
-class GetAllFollowersAPIView(generics.ListAPIView):
+class FollowersAPIView(generics.ListAPIView):
     serializer_class = FollowSerializer
     queryset = Follow.objects.all()
 
     def get(self, request, *args, **kwargs):
-        followers = Follow.objects.filter(followee=request.user).annotate(
+        followers = Follow.objects.filter(
+            followee=kwargs["followee"]
+        ).annotate(
             profile_picture=Concat(
                 Value(settings.MEDIA_BUCKET_URL),
                 F("follower__profile__profile_image"),
@@ -25,7 +27,7 @@ class GetAllFollowersAPIView(generics.ListAPIView):
             ),
             profile_link=Concat(
                 Value(settings.PROFILE_URL),
-                F("follower__profile__id"),
+                F("follower__profile__username"),
                 output_field=models.URLField()
             )
         ).annotate(
@@ -38,11 +40,13 @@ class GetAllFollowersAPIView(generics.ListAPIView):
         return Response(followers, status=status.HTTP_200_OK)
 
 
-class GetAllFollowingsAPIView(generics.ListAPIView):
+class FollowingsAPIView(generics.ListAPIView):
     serializer_class = FollowSerializer
 
     def get(self, request, *args, **kwargs):
-        followings = Follow.objects.filter(follower=request.user).annotate(
+        followings = Follow.objects.filter(
+            follower=kwargs["follower"]
+        ).annotate(
             profile_picture=Concat(
                 Value(settings.MEDIA_BUCKET_URL),
                 F("followee__profile__profile_image"),
@@ -50,7 +54,7 @@ class GetAllFollowingsAPIView(generics.ListAPIView):
             ),
             profile_link=Concat(
                 Value(settings.PROFILE_URL),
-                F("followee__profile__id"),
+                F("followee__profile__username"),
                 output_field=models.URLField()
             )
         ).annotate(

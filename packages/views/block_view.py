@@ -25,7 +25,7 @@ class BlockedListAPIView(generics.ListAPIView):
             ),
             profile_link=Concat(
                 Value(settings.PROFILE_URL),
-                F("blocked__profile__id"),
+                F("blocked__profile__username"),
                 output_field=models.URLField()
             )
         ).annotate(

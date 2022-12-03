@@ -32,7 +32,7 @@ class RecievedRequestAPIView(generics.ListAPIView):
             ),
             profile_link=Concat(
                 Value(settings.PROFILE_URL),
-                F("from_user__profile__id"),
+                F("from_user__profile__username"),
                 output_field=models.URLField()
             )
         ).annotate(
@@ -57,7 +57,7 @@ class SentRequestsAPIView(generics.ListAPIView):
             ),
             profile_link=Concat(
                 Value(settings.PROFILE_URL),
-                F("to_user__profile__id"),
+                F("to_user__profile__username"),
                 output_field=models.URLField()
             )
         ).annotate(
@@ -110,12 +110,12 @@ class CancelFriendRequestAPIView(generics.DestroyAPIView):
         )
 
 
-class AllFriendListAPIView(generics.ListAPIView):
+class FriendListAPIView(generics.ListAPIView):
     serializer_class = FriendsSerializer
     queryset = Friend.objects.all()
 
     def get(self, request, *args, **kwargs):
-        friends = self.queryset.filter(to_user=request.user).annotate(
+        friends = self.queryset.filter(to_user=kwargs["to_user"]).annotate(
             profile_picture=Concat(
                 Value(settings.MEDIA_BUCKET_URL),
                 F("to_user__profile__profile_image"),
@@ -123,7 +123,7 @@ class AllFriendListAPIView(generics.ListAPIView):
             ),
             profile_link=Concat(
                 Value(settings.PROFILE_URL),
-                F("to_user__profile__id"),
+                F("to_user__profile__username"),
                 output_field=models.URLField()
             )
         ).annotate(
