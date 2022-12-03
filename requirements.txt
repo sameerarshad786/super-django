@@ -6,6 +6,5 @@ django-phonenumbers==1.0.1
 django-friendship==1.9.6
 Pillow==9.2.0
 drf_yasg==1.21.3
-geopy==2.3.0
 python_dotenv==0.21.0
 flake8==5.0.4
