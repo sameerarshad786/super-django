@@ -125,15 +125,15 @@ cover_picture = Concat(
 
 profile_link = Concat(
     Value(settings.PROFILE_URL),
-    F("user__profile__id"),
+    F("user__profile__username"),
     output_field=models.URLField()
 )
 
 # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
 popularities = JSONObject(
     total_popularities=F("count"),
-    likes=Count("pk", filter=Q(popularity=Popularity.LIKE)),
-    hearts=Count("pk", filter=Q(popularity=Popularity.HEART)),
+    like=Count("pk", filter=Q(popularity=Popularity.LIKE)),
+    heart=Count("pk", filter=Q(popularity=Popularity.HEART)),
     funny=Count("pk", filter=Q(popularity=Popularity.FUNNY)),
     insightful=Count("pk", filter=Q(popularity=Popularity.INSIGHTFUL)),
     disappoint=Count("pk", filter=Q(popularity=Popularity.DISAPPOINT)),

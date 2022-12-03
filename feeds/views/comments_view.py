@@ -5,10 +5,10 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from rest_framework import parsers, generics, status
 from rest_framework.response import Response
 
-from ..models import Feeds, Comments, Remarks
+from ..models import Posts, Comments, Remarks
 from ..serializers import CommentSerializer
 from core.permissions import IsOwner
-from ..tasks.querysets import (
+from ..service.querysets import (
     profile_link, profile_picture, popularities, created_, updated_
 )
 
@@ -18,18 +18,18 @@ class PostCommentsRetrieveAPIView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         replies_count = Subquery(Comments.objects.filter(
-            on_comment=OuterRef("pk")
-        ).values("on_comment").annotate(count=Count("pk")).values("count"))
+            comment=OuterRef("pk")
+        ).values("comment").annotate(count=Count("pk")).values("count"))
         comment_remarks = Subquery(Remarks.objects.filter(
-            on_comment=OuterRef("pk")
-        ).values("on_comment").annotate(count=Count("pk")).annotate(
+            comment=OuterRef("pk")
+        ).values("comment").annotate(count=Count("pk")).annotate(
             popularities=popularities
         ).values("popularities"))
 
         # https://stackoverflow.com/questions/63020407/return-multiple-values-in-subquery-in-django-orm
         replies = Subquery(Comments.objects.filter(
-            on_comment=OuterRef("pk")
-        ).values("on_comment", "created_at", "updated_at").annotate(
+            comment=OuterRef("pk")
+        ).values("comment", "created_at", "updated_at").annotate(
             created=Now() - F("created_at"), created_=created_,
             updated=Now() - F("updated_at"), updated_=updated_
         ).annotate(
@@ -51,8 +51,8 @@ class PostCommentsRetrieveAPIView(generics.RetrieveAPIView):
         ).values("details"))
 
         comment = Subquery(Comments.objects.filter(
-            on_post=OuterRef("pk"), on_comment=None
-        ).values("on_post", "created_at", "updated_at").annotate(
+            post=OuterRef("pk"), comment=None
+        ).values("post", "created_at", "updated_at").annotate(
             created=Now() - F("created_at"), created_=created_,
             updated=Now() - F("updated_at"), updated_=updated_
         ).values("created_").annotate(
@@ -73,7 +73,7 @@ class PostCommentsRetrieveAPIView(generics.RetrieveAPIView):
             )
         ).values("details"))
 
-        post = Feeds.objects.filter(id=kwargs["on_post_id"]).annotate(
+        post = Posts.objects.filter(id=kwargs["post_id"]).annotate(
             comment=comment,
         ).values("comment")
         return Response(post, status=status.HTTP_200_OK)
@@ -85,18 +85,18 @@ class OnCommentsRetrieveAPIView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         replies_count = Subquery(Comments.objects.filter(
-            on_comment=OuterRef("pk")
-        ).values("on_comment").annotate(count=Count("pk")).values("count"))
+            comment=OuterRef("pk")
+        ).values("comment").annotate(count=Count("pk")).values("count"))
         comment_remarks = Subquery(Remarks.objects.filter(
-            on_comment=OuterRef("pk")
-        ).values("on_comment").annotate(count=Count("pk")).annotate(
+            comment=OuterRef("pk")
+        ).values("comment").annotate(count=Count("pk")).annotate(
             popularities=popularities
         ).values("popularities"))
 
         # https://stackoverflow.com/questions/63020407/return-multiple-values-in-subquery-in-django-orm
         replies = Subquery(Comments.objects.filter(
-            on_comment=OuterRef("pk")
-        ).values("on_comment", "created_at", "updated_at").annotate(
+            comment=OuterRef("pk")
+        ).values("comment").annotate(
             created=Now() - F("created_at"), created_=created_,
             updated=Now() - F("updated_at"), updated_=updated_
         ).annotate(
@@ -117,7 +117,7 @@ class OnCommentsRetrieveAPIView(generics.RetrieveAPIView):
             )
         ).values("details"))
 
-        comment = Comments.objects.filter(on_comment=kwargs["pk"]).annotate(
+        comment = Comments.objects.filter(comment=kwargs["pk"]).annotate(
             created=Now() - F("created_at"), created_=created_,
             updated=Now() - F("updated_at"), updated_=updated_
         ).values("created_").annotate(

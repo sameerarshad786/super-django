@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
-from ..models import Feeds
+from ..models import Posts
 
 
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Feeds
-        fields = ("id", "user", "text", "files", "created", "updated")
+        model = Posts
+        fields = "__all__"
         extra_kwargs = {
             "user": {"read_only": True},
             "text": {"required": False},
@@ -15,4 +15,4 @@ class FeedSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        return Feeds.objects.create(user=user, **validated_data)
+        return Posts.objects.create(user=user, **validated_data)

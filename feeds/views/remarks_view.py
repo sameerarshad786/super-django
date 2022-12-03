@@ -5,10 +5,10 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from ..models import Remarks, Feeds, Comments
+from ..models import Remarks, Posts, Comments
 from ..serializers import RemarkSerializer
 from core.permissions import IsOwner
-from ..tasks.querysets import (
+from ..service.querysets import (
     popularities, profile_picture, profile_link, created_
 )
 
@@ -18,16 +18,16 @@ class PostRemarksRetrieveAPIView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         current_user_action = Subquery(Remarks.objects.filter(
-            on_post=OuterRef("pk"), on_comment=None, user=request.user
-            ).values("on_post", "popularity").annotate(
+            post=OuterRef("pk"), comment=None, user=request.user
+            ).values("post", "popularity").annotate(
                 popularity_=F("popularity")
             ).values("popularity_")
         )
 
         # https://stackoverflow.com/questions/63020407/return-multiple-values-in-subquery-in-django-orm
         popularity_details = Subquery(Remarks.objects.filter(
-            on_post=OuterRef("pk"), on_comment=None
-            ).values("on_post").annotate(
+            post=OuterRef("pk"), comment=None
+            ).values("post").annotate(
                 created=Now() - F("created_at"), created_=created_
             ).values("created_").annotate(
                 details=ArrayAgg(
@@ -45,13 +45,13 @@ class PostRemarksRetrieveAPIView(generics.RetrieveAPIView):
         )
 
         remark = Subquery(Remarks.objects.filter(
-            on_post=OuterRef("pk"), on_comment=None
-            ).values("on_post").annotate(count=Count("pk")).annotate(
+            post=OuterRef("pk"), comment=None
+            ).values("post").annotate(count=Count("pk")).annotate(
                 popularities=popularities,
             ).values("popularities")
         )
 
-        post = Feeds.objects.filter(id=kwargs["on_post_id"]).annotate(
+        post = Posts.objects.filter(id=kwargs["post_id"]).annotate(
             current_user_action=current_user_action,
             remark=remark,
             popularity_details=popularity_details
@@ -64,8 +64,8 @@ class CommentRemarksRetrieveAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         current_user_action = Subquery(Remarks.objects.filter(
-            on_comment=OuterRef("pk"), user=request.user
-            ).values("on_comment", "popularity").annotate(
+            comment=OuterRef("pk"), user=request.user
+            ).values("comment", "popularity").annotate(
                 popularity_=F("popularity")
             ).values("popularity_")
         )
@@ -73,8 +73,8 @@ class CommentRemarksRetrieveAPIView(generics.ListAPIView):
         # https://stackoverflow.com/questions/63020407/return-multiple-values-in-subquery-in-django-orm
         popularity_details = Subquery(
             Remarks.objects.filter(
-                on_comment=OuterRef("pk")
-            ).values("on_comment").annotate(
+                comment=OuterRef("pk")
+            ).values("comment").annotate(
                 created=Now() - F("created_at"), created_=created_
             ).values("created_").annotate(
                 details=ArrayAgg(
@@ -92,13 +92,13 @@ class CommentRemarksRetrieveAPIView(generics.ListAPIView):
         )
 
         remark = Subquery(Remarks.objects.filter(
-            on_comment=OuterRef("pk")
-            ).values("on_comment").annotate(count=Count("pk")).annotate(
+            comment=OuterRef("pk")
+            ).values("comment").annotate(count=Count("pk")).annotate(
                 popularities=popularities,
             ).values("popularities")
         )
 
-        comment = Comments.objects.filter(id=kwargs["on_comment_id"]).annotate(
+        comment = Comments.objects.filter(id=kwargs["comment_id"]).annotate(
             current_user_action=current_user_action,
             remark=remark,
             popularity_details=popularity_details
