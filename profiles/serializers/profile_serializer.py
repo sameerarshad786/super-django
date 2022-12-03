@@ -1,20 +1,12 @@
-from django.utils.translation import gettext_lazy as _
-
 from rest_framework import serializers
 
 from profiles.models.profile_model import Profile, Gender
-from ..location import get_location
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = (
-            "id", "user", "username", "gender", "profile_image",
-            "cover_image", "phone_number", "about", "is_private",
-            "skills", "education", "current_status", "employment_status",
-            "profession", "location", "created", "updated"
-        )
+        fields = "__all__"
         extra_kwargs = {
             "user": {"read_only": True},
             "username": {"required": False},
@@ -25,13 +17,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        request = self.context["request"]
         profile_image = validated_data.get("profile_image")
         gender = validated_data.get("gender")
-        if instance.location is None:
-            validated_data.update(location=get_location(request))
         if instance.username == "" and validated_data.get("username") is None:
-            raise serializers.ValidationError(_("user should have username"))
+            validated_data.update(username=instance.id)
         if profile_image is None:
             if gender == Gender.MALE:
                 validated_data.update(profile_image="profile/male.png")

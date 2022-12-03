@@ -10,7 +10,7 @@ from profiles.serializers.profile_serializer import (
 )
 from profiles.models.profile_model import Profile
 from core.permissions import IsOwner
-from feeds.tasks.querysets import (
+from feeds.service.querysets import (
     created_, updated_, profile_picture, cover_picture
 )
 
