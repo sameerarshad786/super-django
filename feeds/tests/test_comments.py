@@ -40,7 +40,7 @@ class FeedTest(TestCase):
     def test_create_comment(self):
         payload = {
             "text": "my first comment",
-            "on_post": self.post.data.get("id")
+            "post": self.post.data.get("id")
         }
         response = self.client.post(
             CREATE_COMMENTS, payload, **self.auth_headers

@@ -6,10 +6,7 @@ from ..models import Comments
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
-        fields = (
-            "id", "user", "on_post", "on_comment", "text", "files", "created",
-            "updated"
-        )
+        fields = "__all__"
         extra_kwargs = {
             "user": {"read_only": True},
             "text": {"required": False},

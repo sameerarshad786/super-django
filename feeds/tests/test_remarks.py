@@ -41,7 +41,7 @@ class FeedTest(TestCase):
     def test_create_post_remark(self):
         payload = {
             "popularity": Popularity.HEART,
-            "on_post": self.post.data.get("id")
+            "post": self.post.data.get("id")
         }
         response = self.client.post(
             CREATE_REMARK, payload, **self.auth_headers

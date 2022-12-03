@@ -8,44 +8,44 @@ from django.db import models
 from rest_framework import parsers, generics, status
 from rest_framework.response import Response
 
-from ..models import Feeds, Remarks, Comments
+from ..models import Posts, Remarks, Comments
 from ..serializers import FeedSerializer
 from core.permissions import IsOwner
-from ..tasks.querysets import (
+from ..service.querysets import (
     created_, updated_, profile_link, popularities
 )
 
 
 class FeedsAPIView(generics.ListAPIView):
     serializer_class = FeedSerializer
-    queryset = Feeds.objects.all()
+    queryset = Posts.objects.all()
 
     def get(self, request, *args, **kwargs):
         # https://stackoverflow.com/questions/43770118/simple-subquery-with-outerref
         current_user_action = Subquery(Remarks.objects.filter(
-            on_post=OuterRef("pk"), on_comment=None, user=request.user
-            ).values("on_post", "popularity").annotate(
+            post=OuterRef("pk"), comment=None, user=request.user
+            ).values("post", "popularity").annotate(
                 popularity_=F("popularity")
             ).values("popularity")
         )
 
         current_user_commented = Subquery(Comments.objects.filter(
-            on_post=OuterRef("pk"), user=request.user
-            ).values("on_post").annotate(count=Count("pk")).annotate(
+            post=OuterRef("pk"), user=request.user
+            ).values("post").annotate(count=Count("pk")).annotate(
                 comment=Case(When(Q(count=F("count")), then=True))
             ).values("comment")
         )
 
         total_comment = Subquery(Comments.objects.filter(
-            on_post=OuterRef("pk")
-            ).values("on_post").annotate(count=Count("pk")).annotate(
+            post=OuterRef("pk")
+            ).values("post").annotate(count=Count("pk")).annotate(
                 total=F("count")
             ).values("total")
         )
 
         post_remarks = Subquery(Remarks.objects.filter(
-                on_post=OuterRef("pk"), on_comment=None
-                ).values("on_post").annotate(
+                post=OuterRef("pk"), comment=None
+                ).values("post").annotate(
                     count=Count("pk"),
                 ).annotate(
                     popularities=popularities
@@ -88,18 +88,18 @@ class FeedsAPIView(generics.ListAPIView):
 
 class FeedsCreateAPIView(generics.CreateAPIView):
     serializer_class = FeedSerializer
-    queryset = Feeds.objects.all()
+    queryset = Posts.objects.all()
     parser_classes = (parsers.MultiPartParser, )
 
 
 class FeedsUpdateAPIView(generics.UpdateAPIView):
     serializer_class = FeedSerializer
-    queryset = Feeds.objects.all()
+    queryset = Posts.objects.all()
     parser_classes = (parsers.MultiPartParser, )
     permission_classes = (IsOwner, )
 
 
 class FeedsDeleteAPIView(generics.DestroyAPIView):
     serializer_class = FeedSerializer
-    queryset = Feeds.objects.all()
+    queryset = Posts.objects.all()
     permission_classes = (IsOwner, )

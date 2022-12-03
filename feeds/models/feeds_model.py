@@ -9,7 +9,7 @@ def feeds_uploaded_files(instance, filename):
     return f"feeds/{instance.id}/{filename}"
 
 
-class Feeds(UUID):
+class Posts(UUID):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     text = models.TextField()
     files = models.FileField(upload_to=feeds_uploaded_files)

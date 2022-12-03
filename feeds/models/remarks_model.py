@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from .feeds_model import Feeds
+from .feeds_model import Posts
 from .comments_model import Comments
 from core.mixins import UUID
 
@@ -17,8 +17,8 @@ class Popularity(models.TextChoices):
 
 class Remarks(UUID):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    on_post = models.ForeignKey(Feeds, on_delete=models.CASCADE)
-    on_comment = models.ForeignKey(
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE)
+    comment = models.ForeignKey(
         Comments, on_delete=models.SET_NULL, blank=True, null=True
     )
     popularity = models.CharField(max_length=11, choices=Popularity.choices)

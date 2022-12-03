@@ -6,13 +6,10 @@ from ..models import Remarks
 class RemarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Remarks
-        fields = (
-            "id", "user", "on_post", "on_comment", "popularity",
-            "created", "updated"
-        )
+        fields = "__all__"
         extra_kwargs = {
             "user": {"read_only": True},
-            "on_comment": {"required": False}
+            "comment": {"required": False}
         }
 
     def create(self, validated_data):
