@@ -7,7 +7,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from ..serializers import FollowSerializer
-from ..tasks.querysets import created_
+from ..service.querysets import created_
 
 from friendship.models import Follow
 

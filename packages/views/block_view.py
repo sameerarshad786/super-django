@@ -2,13 +2,12 @@ from django.db.models import Value, F
 from django.db.models.functions import Concat, Now
 from django.db import models
 from django.conf import settings
-from django.db import connection
 
 from rest_framework import generics, status
 from rest_framework.response import Response
 
 from ..serializers import BlockUserSerializer
-from ..tasks.querysets import created_
+from ..service.querysets import created_
 
 from friendship.models import Block
 
@@ -36,7 +35,6 @@ class BlockedListAPIView(generics.ListAPIView):
             "id", "blocked_id", "blocked__profile__username",
             "profile_picture", "profile_link", "blocke"
         )
-        print(len(connection.queries))
         return Response(blocked, status=status.HTTP_200_OK)
 
 
