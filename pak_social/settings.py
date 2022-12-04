@@ -57,9 +57,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'profiles.apps.ProfilesConfig',
     'feeds.apps.FeedsConfig',
-
-    # Third Party Packages Application
-    'packages.apps.PackagesConfig',
+    'friendships.apps.FriendShipsConfig',
 
     # 3rd Party Packages
     'phonenumber_field',
