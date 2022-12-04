@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/v1/feeds/', include('feeds.urls')),
     path('api/v1/friendships/', include('friendships.urls')),
     path('api/v1/profile/', include('profiles.urls')),
+    path('api/v1/supermarket/', include('supermarket.urls')),
 
     # 3rd Party Packages
     path('friendship/', include('friendship.urls')),

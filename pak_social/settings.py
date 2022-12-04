@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'feeds.apps.FeedsConfig',
     'friendships.apps.FriendShipsConfig',
+    'supermarket.apps.SuperMarketConfig',
 
     # 3rd Party Packages
     'phonenumber_field',
