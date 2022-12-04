@@ -8,6 +8,7 @@ class TypesAdmin(admin.ModelAdmin):
         "id", "type", "valid_name", "created", "updated"
     )
 
+
 admin.site.register(Types, TypesAdmin)
 
 

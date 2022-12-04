@@ -20,8 +20,8 @@ class StoreSerializer(serializers.ModelSerializer):
         if Types.objects.filter(type=store_type):
             type_st = Types.objects.get(type=store_type)
             return Store.objects.create(
-            user=user, type=type_st, **validated_data
-        )
+                user=user, type=type_st, **validated_data
+            )
         type = Types.objects.create(type=store_type)
         return Store.objects.create(
             user=user, type=type, **validated_data
