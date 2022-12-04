@@ -39,7 +39,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/core/', include('core.urls')),
     path('api/v1/feeds/', include('feeds.urls')),
+    path('api/v1/friendships/', include('friendships.urls')),
     path('api/v1/profile/', include('profiles.urls')),
+
+    # 3rd Party Packages
+    path('friendship/', include('friendship.urls')),
     path(
         'api/v1/developer/swagger/',
         schema_view.with_ui('swagger', cache_timeout=0),
@@ -48,13 +52,7 @@ urlpatterns = [
     path('api/v1/developer/redoc/',
         schema_view.with_ui('redoc', cache_timeout=0),
         name='schema-redoc'
-    ),
-
-    # Third Party Application
-    path('api/v1/packages/', include('packages.urls')),
-
-    # 3rd Party Packages
-    path('friendship/', include('friendship.urls'))
+    )
 ]
 
 if settings.DEBUG:

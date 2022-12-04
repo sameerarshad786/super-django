@@ -1,6 +1,6 @@
 from django.urls import path
 
-from packages.views import friend_view, follow_view, block_view
+from friendships.views import friend_view, follow_view, block_view
 
 
 FRIENDSHIP_URL = [
