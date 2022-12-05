@@ -26,3 +26,9 @@ class StoreUpdateAPIView(generics.UpdateAPIView):
     queryset = Store.objects.all()
     parser_classes = (parsers.MultiPartParser, )
     permission_classes = (IsOwner, )
+
+
+class StoreDestroyAPIView(generics.DestroyAPIView):
+    serializer_class = StoreSerializer
+    queryset = Store.objects.all()
+    permission_classes = (IsOwner, )

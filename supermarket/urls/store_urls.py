@@ -15,5 +15,9 @@ STORE_URLS = [
     path(
         "update/<str:pk>/", store_views.StoreUpdateAPIView.as_view(),
         name="store-update"
+    ),
+    path(
+        "delete/<str:pk>/", store_views.StoreDestroyAPIView.as_view(),
+        name="store-delete"
     )
 ]
