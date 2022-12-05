@@ -11,7 +11,7 @@ class StoreSerializer(serializers.ModelSerializer):
             "user": {"read_only": True},
             "is_verified": {"required": False, "read_only": True},
             "type": {"read_only": True},
-            "location": {"required": False}
+            "location": {"required": True}
         }
 
     def create(self, validated_data):
