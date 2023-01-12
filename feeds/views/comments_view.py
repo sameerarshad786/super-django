@@ -1,82 +1,24 @@
-from django.db.models import Subquery, OuterRef, F, Count
-from django.db.models.functions import JSONObject, Now
-from django.contrib.postgres.aggregates import ArrayAgg
-
 from rest_framework import parsers, generics, status
 from rest_framework.response import Response
 
-from ..models import Posts, Comments, Remarks
+from ..models import Comments
 from ..serializers import CommentSerializer
 from core.permissions import IsOwner
-from ..service.querysets import (
-    profile_link, profile_picture, popularities, created_, updated_
-)
+from ..service import comment_popularities, user_replied, total_replies
 
 
 class PostCommentsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
+    queryset = Comments.objects.filter(comment=None)
 
     def get(self, request, *args, **kwargs):
-        replies_count = Subquery(Comments.objects.filter(
-            comment=OuterRef("pk")
-        ).values("comment").annotate(count=Count("pk")).values("count"))
-        comment_remarks = Subquery(Remarks.objects.filter(
-            comment=OuterRef("pk")
-        ).values("comment").annotate(count=Count("pk")).annotate(
-            popularities=popularities
-        ).values("popularities"))
-
-        # https://stackoverflow.com/questions/63020407/return-multiple-values-in-subquery-in-django-orm
-        replies = Subquery(Comments.objects.filter(
-            comment=OuterRef("pk")
-        ).values("comment", "created_at", "updated_at").annotate(
-            created=Now() - F("created_at"), created_=created_,
-            updated=Now() - F("updated_at"), updated_=updated_
-        ).annotate(
-            details=ArrayAgg(
-                JSONObject(
-                    id="id",
-                    user_id="user_id",
-                    username="user__profile__username",
-                    text="text",
-                    files="files",
-                    created="created_",
-                    updated="updated_",
-                    profile_link=profile_link,
-                    profile_image=profile_picture,
-                    comment_remarks=comment_remarks,
-                    replies_count=replies_count
-                )
-            )
-        ).values("details"))
-
-        comment = Subquery(Comments.objects.filter(
-            post=OuterRef("pk"), comment=None
-        ).values("post", "created_at", "updated_at").annotate(
-            created=Now() - F("created_at"), created_=created_,
-            updated=Now() - F("updated_at"), updated_=updated_
-        ).values("created_").annotate(
-            details=ArrayAgg(
-                JSONObject(
-                    id="id",
-                    user_id="user_id",
-                    username="user__profile__username",
-                    text="text",
-                    files="files",
-                    created="created_",
-                    updated="updated_",
-                    profile_link=profile_link,
-                    profile_image=profile_picture,
-                    comment_remarks=comment_remarks,
-                    comment_replies=replies
-                )
-            )
-        ).values("details"))
-
-        post = Posts.objects.filter(id=kwargs["post_id"]).annotate(
-            comment=comment,
-        ).values("comment")
-        return Response(post, status=status.HTTP_200_OK)
+        query = self.filter_queryset(self.get_queryset())
+        query = comment_popularities(query, request)
+        query = user_replied(query, request)
+        query = total_replies(query)
+        serializer = self.get_serializer(
+            query, context={"request": request}, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class OnCommentsRetrieveAPIView(generics.RetrieveAPIView):
@@ -84,60 +26,13 @@ class OnCommentsRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Comments.objects.all()
 
     def get(self, request, *args, **kwargs):
-        replies_count = Subquery(Comments.objects.filter(
-            comment=OuterRef("pk")
-        ).values("comment").annotate(count=Count("pk")).values("count"))
-        comment_remarks = Subquery(Remarks.objects.filter(
-            comment=OuterRef("pk")
-        ).values("comment").annotate(count=Count("pk")).annotate(
-            popularities=popularities
-        ).values("popularities"))
-
-        # https://stackoverflow.com/questions/63020407/return-multiple-values-in-subquery-in-django-orm
-        replies = Subquery(Comments.objects.filter(
-            comment=OuterRef("pk")
-        ).values("comment").annotate(
-            created=Now() - F("created_at"), created_=created_,
-            updated=Now() - F("updated_at"), updated_=updated_
-        ).annotate(
-            details=ArrayAgg(
-                JSONObject(
-                    id="id",
-                    user_id="user_id",
-                    username="user__profile__username",
-                    text="text",
-                    files="files",
-                    created="created_",
-                    updated="updated_",
-                    profile_link=profile_link,
-                    profile_image=profile_picture,
-                    comment_remarks=comment_remarks,
-                    replies_count=replies_count
-                )
-            )
-        ).values("details"))
-
-        comment = Comments.objects.filter(comment=kwargs["pk"]).annotate(
-            created=Now() - F("created_at"), created_=created_,
-            updated=Now() - F("updated_at"), updated_=updated_
-        ).values("created_").annotate(
-            details=ArrayAgg(
-                JSONObject(
-                    id="id",
-                    user_id="user_id",
-                    username="user__profile__username",
-                    text="text",
-                    files="files",
-                    created="created_",
-                    updated="updated_",
-                    profile_link=profile_link,
-                    profile_image=profile_picture,
-                    comment_remarks=comment_remarks,
-                    comment_replies=replies
-                )
-            )
-        ).values("details")
-        return Response(comment)
+        query = Comments.objects.filter(id=kwargs["pk"])
+        query = comment_popularities(query, request)
+        query = user_replied(query, request)
+        query = total_replies(query)
+        serializer = self.get_serializer(
+            query, context={"request": request}, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class CommentsCreateAPIView(generics.CreateAPIView):

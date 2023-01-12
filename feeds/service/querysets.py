@@ -10,7 +10,7 @@ from feeds.models import Popularity
 
 created_ = Case(
     When(
-        Q(created__gte=timedelta(seconds=1))
+        Q(created__gte=timedelta(seconds=59))
         & ~Q(created__gte=timedelta(minutes=1)), then=Concat(
             Extract("created", "second"),
             Value(" seconds ago"),
@@ -51,11 +51,11 @@ created_ = Case(
         )
     ),
     When(
-        Q(created__lt=timedelta(days=730)), then=Value("1 year ago")
+        Q(created__lt=timedelta(days=732)), then=Value("1 year ago")
     ),
     When(
-        Q(created__gte=timedelta(days=730)), then=Concat(
-            F("created_at__year"),
+        Q(created__gte=timedelta(days=732)), then=Concat(
+            Extract("created_at", "year"),
             Value(" years ago"),
             output_field=models.CharField()
         )
@@ -131,7 +131,7 @@ profile_link = Concat(
 
 # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
 popularities = JSONObject(
-    total_popularities=F("count"),
+    total_popularities=Count("pk"),
     like=Count("pk", filter=Q(popularity=Popularity.LIKE)),
     heart=Count("pk", filter=Q(popularity=Popularity.HEART)),
     funny=Count("pk", filter=Q(popularity=Popularity.FUNNY)),

@@ -11,8 +11,8 @@ def feeds_uploaded_files(instance, filename):
 
 class Posts(UUID):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    text = models.TextField()
-    files = models.FileField(upload_to=feeds_uploaded_files)
+    text = models.TextField(blank=True)
+    files = models.FileField(blank=True, upload_to=feeds_uploaded_files)
 
     def get_text(self):
         return f"{self.text[:20]}..."

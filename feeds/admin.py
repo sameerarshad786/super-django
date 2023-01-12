@@ -9,6 +9,7 @@ class FeedsAdmin(admin.ModelAdmin):
     list_display = (
         "id", "user", "get_text", "get_files", "created", "updated"
     )
+    ordering = ("-created_at", )
 
 
 admin.site.register(Posts, FeedsAdmin)

@@ -8,8 +8,7 @@ class RemarkSerializer(serializers.ModelSerializer):
         model = Remarks
         fields = "__all__"
         extra_kwargs = {
-            "user": {"read_only": True},
-            "comment": {"required": False}
+            "user": {"read_only": True}
         }
 
     def create(self, validated_data):
