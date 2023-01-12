@@ -15,8 +15,8 @@ class Comments(UUID):
     comment = models.ForeignKey(
         "self", on_delete=models.CASCADE, blank=True, null=True
     )
-    text = models.TextField()
-    files = models.FileField(upload_to=comment_media_path)
+    text = models.TextField(blank=True)
+    files = models.FileField(blank=True, upload_to=comment_media_path)
 
     def get_text(self):
         return f"{self.text[:20]}"
