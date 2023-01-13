@@ -45,7 +45,7 @@ class FeedSerializer(serializers.ModelSerializer):
                     "current_user_disappoint": False,
                     "current_user_insightful": False
                 } if instance.popularities is None else instance.popularities
-            representation["total_comments"] = 0 \
+            representation["total_comment"] = 0 \
                 if instance.total_comment is None else instance.total_comment
         return representation
 
