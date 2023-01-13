@@ -7,7 +7,7 @@ from core.permissions import IsOwner
 from ..service import comment_popularities, user_replied, total_replies
 
 
-class PostCommentsRetrieveAPIView(generics.RetrieveAPIView):
+class CommentsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
     queryset = Comments.objects.filter(comment=None)
 
@@ -21,7 +21,7 @@ class PostCommentsRetrieveAPIView(generics.RetrieveAPIView):
         return Response(serializer, status=status.HTTP_200_OK)
 
 
-class OnCommentsRetrieveAPIView(generics.RetrieveAPIView):
+class ChildCommentsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
     queryset = Comments.objects.all()
 

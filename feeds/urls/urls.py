@@ -22,12 +22,12 @@ FEEDS_API_VIEW = [
 COMMENTS_API_VIEW = [
     path(
         "detail/<uuid:post_id>/",
-        comments_view.PostCommentsRetrieveAPIView.as_view(),
+        comments_view.CommentsRetrieveAPIView.as_view(),
         name="post-comments-retrieve"
     ),
     path(
         "comments-replies/<str:pk>/",
-        comments_view.OnCommentsRetrieveAPIView.as_view(),
+        comments_view.ChildCommentsRetrieveAPIView.as_view(),
         name="comments-retrieve"
     ),
     path(
