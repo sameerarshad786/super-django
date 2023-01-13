@@ -4,9 +4,9 @@ from ..models import Posts
 
 
 class FeedSerializer(serializers.ModelSerializer):
-    popularities = serializers.JSONField(read_only=True)
-    current_user_commented = serializers.BooleanField(read_only=True)
-    total_comment = serializers.IntegerField(read_only=True)
+    popularities = serializers.JSONField()
+    total_comment = serializers.IntegerField()
+    current_user_commented = serializers.BooleanField()
 
     class Meta:
         model = Posts
@@ -20,7 +20,10 @@ class FeedSerializer(serializers.ModelSerializer):
             "current_user_commented"
         )
         extra_kwargs = {
-            "user": {"read_only": True}
+            "user": {"read_only": True},
+            "popularities": {"read_only": True},
+            "total_comment": {"read_only": True},
+            "current_user_commented": {"read_only": True}
         }
 
     def to_representation(self, instance):
