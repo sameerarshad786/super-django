@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/v1/friendships/', include('friendships.urls')),
     path('api/v1/profile/', include('profiles.urls')),
     path('api/v1/supermarket/', include('supermarket.urls')),
+    path('chatbot/', include('chatbot.urls')),
 
     # 3rd Party Packages
     path('friendship/', include('friendship.urls')),
@@ -55,6 +56,10 @@ urlpatterns = [
         name='schema-redoc'
     )
 ]
+
+handler400='rest_framework.exceptions.bad_request'
+handler404='core.exceptions.not_found'
+handler500='rest_framework.exceptions.server_error'
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
