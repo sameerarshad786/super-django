@@ -9,8 +9,9 @@ POSTGRES_VERSION=$(psql --version)
 
 if ! [[ $POSTGRES_VERSION ]]
 then
-    echo "You don't have postgres installed on your system"
-    pip install postgres
+    echo -e "\n\n~~~ You don't have postgres installed on your system ~~~\n\n"
+    sudo apt update
+    sudo apt install postgresql
 fi
 
 PSQL="psql -X --dbname=postgres -w postgres --no-align --tuples-only -c"
