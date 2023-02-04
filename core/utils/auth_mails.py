@@ -1,5 +1,3 @@
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
@@ -9,6 +7,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..models import User
+from .send_emails import send_emails
 
 
 class Util:
@@ -19,16 +18,13 @@ class Util:
         relativeLink = reverse("verify-email")
         token = RefreshToken().for_user(user)
         absurl = f"{current_site}{relativeLink}?token={str(token)}"
-        html_content = render_to_string(
-            "auth_mails/registration_mail.html",
-            {"absurl": absurl}
-        )
-        msg = EmailMessage(
-            subject="Registration Mail", body=html_content,
-            to=[user]
-        )
-        msg.content_subtype = "html"
-        msg.send()
+        template = "auth_mails/registration_mail.html"
+        context = {
+            "absurl": absurl
+        }
+        to_user = user.email
+        subject = "Registration"
+        send_emails(subject, template, context, to_user)
 
     @staticmethod
     def password_reset_mail(data):
@@ -41,13 +37,10 @@ class Util:
             kwargs={"uidb64": uidb64, "token": token}
         )
         absurl = f"http://{current_site}{relativeLink}?token={token}"
-        html_content = render_to_string(
-            "auth_mails/password_reset_mail.html",
-            {"absurl": absurl}
-        )
-        msg = EmailMessage(
-            subject="Password Reset", body=html_content,
-            to=[user]
-        )
-        msg.content_subtype = "html"
-        msg.send()
+        subject = "Password Reset"
+        template = "auth_mails/password_reset_mail.html"
+        context = {
+            "absurl": absurl
+        }
+        to_user = user.email
+        send_emails(subject, template, context, to_user)
