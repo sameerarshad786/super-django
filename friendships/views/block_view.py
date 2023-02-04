@@ -48,7 +48,7 @@ class UnBlockUserAPIView(generics.DestroyAPIView):
     queryset = Block.objects.all()
 
     def destroy(self, request, *args, **kwargs):
-        blocked_user = Block.objects.filter(blocked=kwargs["blocked_id"])
+        blocked_user = Block.objects.filter(blocked=kwargs["user_id"])
         if blocked_user.exists():
             blocked_user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
