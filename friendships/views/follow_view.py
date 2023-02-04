@@ -18,7 +18,7 @@ class FollowersAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         followers = Follow.objects.filter(
-            followee=kwargs["followee"]
+            followee=kwargs["user_id"]
         ).annotate(
             profile_picture=Concat(
                 Value(settings.MEDIA_BUCKET_URL),
@@ -45,7 +45,7 @@ class FollowingsAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         followings = Follow.objects.filter(
-            follower=kwargs["follower"]
+            follower=kwargs["user_id"]
         ).annotate(
             profile_picture=Concat(
                 Value(settings.MEDIA_BUCKET_URL),
@@ -78,7 +78,7 @@ class UnFollowUserAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         followee = Follow.objects.filter(
-            followee=kwargs["followee_id"], follower=request.user
+            followee=kwargs["user_id"], follower=request.user
         )
         if followee.exists():
             followee.delete()

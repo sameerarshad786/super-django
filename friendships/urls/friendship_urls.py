@@ -17,24 +17,24 @@ FRIENDSHIP_URL = [
     path("accept-request/",
          friend_view.AcceptFriendRequestAPIView.as_view(),
          name="accept-request"),
-    path("cancel-request/<int:to_user>/",
+    path("cancel-request/<int:user_id>/",
          friend_view.CancelFriendRequestAPIView.as_view(),
          name="cancel-request"),
-    path("friends/<int:to_user>",
+    path("friends/<int:user_id>",
          friend_view.FriendListAPIView.as_view(),
          name="all-friends"),
-    path("unfriend/<int:to_user>/",
+    path("unfriend/<int:user_id>/",
          friend_view.UnFriendAPIView.as_view(),
          name="all-friends"),
 
     # follow and unfollow users API's
-    path("followers/<int:followee>", follow_view.FollowersAPIView.as_view(),
+    path("followers/<int:user_id>", follow_view.FollowersAPIView.as_view(),
          name="all-followers"),
-    path("followings/<int:follower>", follow_view.FollowingsAPIView.as_view(),
+    path("followings/<int:user_id>", follow_view.FollowingsAPIView.as_view(),
          name="all-followings"),
     path("follow/", follow_view.FollowUserAPIView.as_view(),
          name="follow"),
-    path("unfollow/<int:followee_id>/",
+    path("unfollow/<int:user_id>/",
          follow_view.UnFollowUserAPIView.as_view(),
          name="unfollow"),
 
@@ -43,6 +43,6 @@ FRIENDSHIP_URL = [
          name="block-list"),
     path("block/", block_view.BlockUserAPIView.as_view(),
          name="block"),
-    path("unblock/<int:blocked_id>/", block_view.UnBlockUserAPIView.as_view(),
+    path("unblock/<int:user_id>/", block_view.UnBlockUserAPIView.as_view(),
          name="unblock")
 ]

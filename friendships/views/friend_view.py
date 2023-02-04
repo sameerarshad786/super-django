@@ -99,7 +99,7 @@ class CancelFriendRequestAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         friend_request = FriendshipRequest.objects.filter(
-            to_user=kwargs["to_user"]
+            to_user=kwargs["user_id"]
         )
         if friend_request.exists():
             friend_request.delete()
@@ -115,7 +115,7 @@ class FriendListAPIView(generics.ListAPIView):
     queryset = Friend.objects.all()
 
     def get(self, request, *args, **kwargs):
-        friends = self.queryset.filter(to_user=kwargs["to_user"]).annotate(
+        friends = self.queryset.filter(to_user=kwargs["user_id"]).annotate(
             profile_picture=Concat(
                 Value(settings.MEDIA_BUCKET_URL),
                 F("to_user__profile__profile_image"),
@@ -142,11 +142,11 @@ class UnFriendAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         friend = Friend.objects.filter(
-            from_user=request.user, to_user=kwargs["to_user"]
+            from_user=request.user, to_user=kwargs["user_id"]
         )
         if friend.exists():
             Friend.objects.filter(
-                from_user=kwargs["to_user"], to_user=request.user
+                from_user=kwargs["user_id"], to_user=request.user
             ).delete()
             friend.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
