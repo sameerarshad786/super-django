@@ -1,3 +1,5 @@
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
 from ..models import Store, Types
@@ -6,7 +8,15 @@ from ..models import Store, Types
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
-        fields = "__all__"
+        fields = (
+            "id",
+            "user",
+            "name",
+            "store_type",
+            "image",
+            "is_verified",
+            "location"
+        )
         extra_kwargs = {
             "user": {"read_only": True},
             "is_verified": {"required": False, "read_only": True},
@@ -26,3 +36,9 @@ class StoreSerializer(serializers.ModelSerializer):
         return Store.objects.create(
             user=user, type=type, **validated_data
         )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["created"] = instance.created()
+        representation["updated"] = instance.updated()
+        return representation

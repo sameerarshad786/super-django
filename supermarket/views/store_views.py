@@ -1,18 +1,29 @@
-from rest_framework import generics, parsers
+from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework import generics, parsers, permissions
+from rest_framework import throttling
 
 from ..models import Store
 from ..serializers import StoreSerializer
+from ..filters import StoreFilter
 from core.permissions import IsOwner
+
+
+class StoreListAPIView(generics.ListAPIView):
+    serializer_class = StoreSerializer
+    queryset = Store.objects.all()
+    permission_classes = (permissions.AllowAny, )
+    throttle_classes = (throttling.AnonRateThrottle, )
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = StoreFilter
 
 
 class StoreRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = StoreSerializer
     queryset = Store.objects.all()
+    permission_classes = (permissions.AllowAny, )
+    throttle_classes = (throttling.AnonRateThrottle, )
     lookup_field = "name"
-
-    def get_queryset(self):
-        store = Store.objects.filter(name=self.kwargs["name"])
-        return store
 
 
 class StoreCreateAPIView(generics.CreateAPIView):
