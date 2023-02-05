@@ -31,7 +31,7 @@ class UserProfileTest(TestCase):
 
     def test_retrieve_profile(self):
         response = self.client.get(
-            reverse("profile-retrieve", args=[self.profile.id]),
+            reverse("profile-retrieve", args=[self.profile.username]),
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 200)
@@ -41,7 +41,7 @@ class UserProfileTest(TestCase):
             "username": "test user"
         }
         response = self.client.patch(
-            reverse("profile-update", args=[self.profile.id]),
+            reverse("profile-update", args=[self.profile.username]),
             payload, content_type='multipart/form-data; \
                 boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             **self.auth_headers
@@ -52,7 +52,7 @@ class UserProfileTest(TestCase):
         response = self.client.patch(
             reverse(
                 "profile-update",
-                args=["0db2ad5c-cca2-47e1-a1b1-3ba0d006023a"]
+                args=["random"]
             ),
             **self.auth_headers
         )
@@ -65,7 +65,7 @@ class UserProfileTest(TestCase):
         }
         response = self.client.patch(
             reverse(
-                "profile-update", args=[self.profile.id]
+                "profile-update", args=[self.profile.username]
             ),
             payload, content_type='multipart/form-data; \
                 boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
