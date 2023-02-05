@@ -1,12 +1,33 @@
+from django.conf import settings
+
 from rest_framework import serializers
 
-from profiles.models.profile_model import Profile, Gender
+from profiles.models.profile_model import Profile
+from core.models import User
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = "__all__"
+        fields = (
+            "id",
+            "user",
+            "username",
+            "gender",
+            "full_name",
+            "phone_number",
+            "profile_image",
+            "cover_image",
+            "is_private",
+            "skills",
+            "education",
+            "current_status",
+            "employment_status",
+            "profession",
+            "location",
+            "created",
+            "updated"
+        )
         extra_kwargs = {
             "user": {"read_only": True},
             "username": {"required": False},
@@ -22,9 +43,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         if instance.username == "" and validated_data.get("username") is None:
             validated_data.update(username=instance.id)
         if profile_image is None:
-            if gender == Gender.MALE:
+            if gender == Profile.Gender.MALE:
                 validated_data.update(profile_image="profile/male.png")
-            elif gender == Gender.FEMALE:
+            elif gender == Profile.Gender.FEMALE:
                 validated_data.update(profile_image="profile/female.png")
         return super().update(instance, validated_data)
 
@@ -32,9 +53,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = (
-            "id", "user", "profile_image"
-        )
+        fields = ("id", "user", "profile_image")
         extra_kwargs = {
             "user": {"read_only": True},
             "profile_image": {"required": False}
@@ -42,11 +61,11 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
-        if instance.gender == Gender.MALE:
+        if instance.gender == Profile.Gender.MALE:
             return Profile.objects.filter(user=user).update(
                 profile_image="profile/male.png"
             )
-        elif instance.gender == Gender.FEMALE:
+        elif instance.gender == Profile.Gender.FEMALE:
             return Profile.objects.filter(user=user).update(
                 cover_image="profile/female.png"
             )
@@ -57,9 +76,7 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 class CoverImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = (
-            "id", "user", "cover_image"
-        )
+        fields = ("id", "user", "cover_image")
         extra_kwargs = {
             "user": {"read_only": True},
             "profile_image": {"required": False}
@@ -70,3 +87,18 @@ class CoverImageSerializer(serializers.ModelSerializer):
         return Profile.objects.filter(user=user).update(
             cover_image="cover/default-cover.png"
         )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source="user.profile.full_name")
+    profile_image = serializers.URLField(
+        source="user.profile.profile_image.url")
+    cover_image = serializers.URLField(source="user.profile.cover_image.url")
+    profile_link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("full_name", "profile_image", "cover_image", "profile_link")
+
+    def get_profile_link(self, obj):
+        return f"{settings.PROFILE_URL}{obj.user.profile.username}/"
