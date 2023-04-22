@@ -1,19 +1,16 @@
-import json
-
-from django.urls import reverse
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from profiles.models import Profile
 
 
-LOGIN_URL = reverse("login")
-CREATE_STORE = reverse("store-create")
+CREATE_POSTS = reverse("posts-create")
 
 
-class UserProfileTest(TestCase):
+class FeedTest(TestCase):
     def setUp(self) -> None:
         self.email = "testuser@paksocial.com"
         self.password = "testing321"
@@ -25,44 +22,32 @@ class UserProfileTest(TestCase):
         user = get_user_model().objects.last()
         self.tokens = RefreshToken().for_user(user)
         self.profile = Profile.objects.create(
-            user=self.user, username="test user"
+            user=self.user, profile_image="profile/male.png"
         )
         self.auth_headers = {
             'HTTP_AUTHORIZATION': f'Bearer {self.tokens.access_token}'
         }
-        self.payload = {
-            "user": self.user,
-            "store_name": "my test store",
-            "store_type": "testing",
-            "location": json.dumps({
-                "city": "karachi",
-                "country": "pakistan"
-            })
-        }
-        self.store = self.client.post(
-            CREATE_STORE, self.payload, **self.auth_headers
+        self.post = self.client.post(
+            CREATE_POSTS, {"text": "my testing post"}, format="json",
+            **self.auth_headers
         )
 
-    def test_create_store(self):
+    def test_create_post(self):
         payload = {
-            "user": self.user,
-            "store_name": "django test store",
-            "store_type": "testing",
-            "location": json.dumps({
-                "city": "karachi",
-                "country": "pakistan"
-            })
+            "text": "my first post"
         }
         response = self.client.post(
-            CREATE_STORE, payload, **self.auth_headers
+            CREATE_POSTS, payload, format="json", **self.auth_headers
         )
         self.assertEqual(response.status_code, 201)
 
-    def test_update_store(self):
+    def test_update_post(self):
+        payload = {
+            "text": "my updated post"
+        }
         response = self.client.patch(
-            reverse("store-update", args=[self.store.data.get("id")]),
-            self.payload,
-            content_type='multipart/form-data; \
+            reverse("posts-update", args=[self.post.data.get("id")]),
+            payload, content_type='multipart/form-data; \
                 boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             **self.auth_headers
         )
@@ -70,7 +55,7 @@ class UserProfileTest(TestCase):
 
     def test_delete_post(self):
         response = self.client.delete(
-            reverse("store-delete", args=[self.store.data.get("id")]),
+            reverse("posts-delete", args=[self.post.data.get("id")]),
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 204)

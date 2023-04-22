@@ -3,8 +3,6 @@
 postgresql_db
 __pycache__
 
-manage.py
-
 .flake8
 
 media
