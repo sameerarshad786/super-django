@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from profiles.models import Profile
-from ..models import Types
 
 
 LOGIN_URL = reverse("login")
@@ -28,15 +27,13 @@ class UserProfileTest(TestCase):
         self.profile = Profile.objects.create(
             user=self.user, username="test user"
         )
-        self.type = Types.objects.create(type="testing", valid_name=True)
         self.auth_headers = {
             'HTTP_AUTHORIZATION': f'Bearer {self.tokens.access_token}'
         }
         self.payload = {
             "user": self.user,
-            "name": "my test store",
+            "store_name": "my test store",
             "store_type": "testing",
-            "type": self.type,
             "location": json.dumps({
                 "city": "karachi",
                 "country": "pakistan"
@@ -49,9 +46,8 @@ class UserProfileTest(TestCase):
     def test_create_store(self):
         payload = {
             "user": self.user,
-            "name": "django test store",
+            "store_name": "django test store",
             "store_type": "testing",
-            "type": self.type,
             "location": json.dumps({
                 "city": "karachi",
                 "country": "pakistan"
@@ -61,7 +57,7 @@ class UserProfileTest(TestCase):
             CREATE_STORE, payload, **self.auth_headers
         )
         self.assertEqual(response.status_code, 201)
-    
+
     def test_update_store(self):
         response = self.client.patch(
             reverse("store-update", args=[self.store.data.get("id")]),

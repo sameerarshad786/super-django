@@ -1,1 +1,2 @@
-from .store_serializer import *
+from .stores_serializer import *
+from .products_serializer import *

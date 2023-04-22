@@ -8,19 +8,20 @@ def store_files_path(instance, filename):
     return f"stores/{instance.id}/{filename}"
 
 
-class Types(UUID):
+class StoreTypes(UUID):
     type = models.CharField(max_length=150, unique=True)
     valid_name = models.BooleanField(default=False)
 
 
-class Store(UUID):
+class Stores(UUID):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=155, unique=True)
-    store_type = models.CharField(max_length=100)
-    type = models.ForeignKey(Types, models.SET_NULL, blank=True, null=True)
-    image = models.FileField(upload_to=store_files_path, default="default.png")
+    store_name = models.CharField(max_length=155, unique=True)
+    store_type = models.ForeignKey(
+        StoreTypes, models.SET_NULL, blank=True, null=True)
+    images = models.FileField(
+        upload_to=store_files_path, default="default.png")
     is_verified = models.BooleanField(default=False)
-    location = models.JSONField(blank=True)
+    location = models.JSONField(blank=True, null=True)
 
     def get_image(self):
-        return bool(self.image)
+        return True if self.images else False
