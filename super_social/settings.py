@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'posts.apps.PostsConfig',
     'friendships.apps.FriendShipsConfig',
     'supermarket.apps.SuperMarketConfig',
-    'chatbot.apps.ChatbotConfig',
 
     # 3rd Party Packages
     'rest_framework',
