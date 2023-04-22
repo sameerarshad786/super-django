@@ -9,3 +9,4 @@ Pillow==9.2.0
 drf_yasg==1.21.3
 python_dotenv==0.21.0
 flake8==5.0.4
+django_cors_headers==3.13.0

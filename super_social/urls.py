@@ -1,4 +1,4 @@
-"""pak_social URL Configuration
+"""super_social URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -38,7 +38,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/core/', include('core.urls')),
-    path('api/v1/feeds/', include('feeds.urls')),
+    path('api/v1/feeds/', include('posts.urls')),
     path('api/v1/friendships/', include('friendships.urls')),
     path('api/v1/profile/', include('profiles.urls')),
     path('api/v1/supermarket/', include('supermarket.urls')),
@@ -47,7 +47,7 @@ urlpatterns = [
     # 3rd Party Packages
     path('friendship/', include('friendship.urls')),
     path(
-        'api/v1/developer/swagger/',
+        'api/v1/developer/docs/',
         schema_view.with_ui('swagger', cache_timeout=0),
         name='schema-swagger-ui'
     ),
