@@ -9,7 +9,7 @@ from ..service import comment_popularities, user_replied, total_replies
 
 class CommentsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
-    queryset = Comments.objects.filter(comment=None)
+    queryset = Comments.objects.filter(parent=None)
 
     def get(self, request, *args, **kwargs):
         query = self.filter_queryset(self.get_queryset())

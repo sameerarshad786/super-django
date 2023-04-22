@@ -1,11 +1,9 @@
 from datetime import timedelta
 
-from django.db.models import F, Value, When, Case, Q, Count
-from django.db.models.functions import Concat, Extract, JSONObject
+from django.db.models import F, Value, When, Case, Q
+from django.db.models.functions import Concat, Extract
 from django.db import models
 from django.conf import settings
-
-from feeds.models import Popularity
 
 
 created_ = Case(
@@ -111,6 +109,12 @@ updated_ = Case(
     )
 )
 
+Posts_image = Concat(
+    Value(settings.MEDIA_BUCKET_URL),
+    F("files"),
+    output_field=models.URLField()
+)
+
 profile_picture = Concat(
     Value(settings.MEDIA_BUCKET_URL),
     F("user__profile__profile_image"),
@@ -127,14 +131,4 @@ profile_link = Concat(
     Value(settings.PROFILE_URL),
     F("user__profile__username"),
     output_field=models.URLField()
-)
-
-# https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
-popularities = JSONObject(
-    total_popularities=Count("pk"),
-    like=Count("pk", filter=Q(popularity=Popularity.LIKE)),
-    heart=Count("pk", filter=Q(popularity=Popularity.HEART)),
-    funny=Count("pk", filter=Q(popularity=Popularity.FUNNY)),
-    insightful=Count("pk", filter=Q(popularity=Popularity.INSIGHTFUL)),
-    disappoint=Count("pk", filter=Q(popularity=Popularity.DISAPPOINT)),
 )

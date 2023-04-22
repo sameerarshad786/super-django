@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from profiles.models import Profile
 
 
-CREATE_POSTS = reverse("feeds-create")
+CREATE_POSTS = reverse("posts-create")
 
 
 class FeedTest(TestCase):
@@ -43,10 +43,10 @@ class FeedTest(TestCase):
 
     def test_update_post(self):
         payload = {
-            "text": "my updatedt post"
+            "text": "my updated post"
         }
         response = self.client.patch(
-            reverse("feeds-update", args=[self.post.data.get("id")]),
+            reverse("posts-update", args=[self.post.data.get("id")]),
             payload, content_type='multipart/form-data; \
                 boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             **self.auth_headers
@@ -55,7 +55,7 @@ class FeedTest(TestCase):
 
     def test_delete_post(self):
         response = self.client.delete(
-            reverse("feeds-delete", args=[self.post.data.get("id")]),
+            reverse("posts-delete", args=[self.post.data.get("id")]),
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 204)

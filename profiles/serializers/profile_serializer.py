@@ -91,9 +91,9 @@ class CoverImageSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source="user.profile.full_name")
-    profile_image = serializers.URLField(
-        source="user.profile.profile_image.url")
-    cover_image = serializers.URLField(source="user.profile.cover_image.url")
+    profile_image = serializers.ImageField(
+        source="user.profile.profile_image")
+    cover_image = serializers.ImageField(source="user.profile.cover_image")
     profile_link = serializers.SerializerMethodField()
 
     class Meta:

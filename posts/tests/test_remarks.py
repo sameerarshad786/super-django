@@ -4,11 +4,12 @@ from django.urls import reverse
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from profiles.models import Profile, Gender
+from profiles.models import Profile
+from ..models import Remarks
 
 
-CREATE_POSTS = reverse("feeds-create")
-CREATE_COMMENTS = reverse("comments-create")
+CREATE_POSTS = reverse("posts-create")
+CREATE_REMARK = reverse("remarks-create")
 
 
 class FeedTest(TestCase):
@@ -24,7 +25,7 @@ class FeedTest(TestCase):
         self.tokens = RefreshToken().for_user(user)
         self.profile = Profile.objects.create(
             user=self.user, username="testuser",
-            gender=Gender.MALE, profile_image="profile/male.png"
+            gender=Profile.Gender.MALE, profile_image="profile/male.png"
         )
         self.auth_headers = {
             'HTTP_AUTHORIZATION': f'Bearer {self.tokens.access_token}'
@@ -37,31 +38,32 @@ class FeedTest(TestCase):
             **self.auth_headers
         )
 
-    def test_create_comment(self):
+    def test_create_post_remark(self):
         payload = {
-            "text": "my first comment",
+            "popularity": Remarks.Popularity.HEART,
             "post": self.post.data.get("id")
         }
         response = self.client.post(
-            CREATE_COMMENTS, payload, **self.auth_headers
+            CREATE_REMARK, payload, **self.auth_headers
         )
         self.assertEqual(response.status_code, 201)
 
-    def test_update_comment(self):
+    def test_update_post_remark(self):
         payload = {
+            "popularity": Remarks.Popularity.LIKE,
             "text": "my updatedt post"
         }
         response = self.client.patch(
-            reverse("feeds-update", args=[self.post.data.get("id")]),
+            reverse("posts-update", args=[self.post.data.get("id")]),
             payload, content_type='multipart/form-data; \
                 boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_delete_comment(self):
+    def test_delete_post_remark(self):
         response = self.client.delete(
-            reverse("feeds-delete", args=[self.post.data.get("id")]),
+            reverse("posts-delete", args=[self.post.data.get("id")]),
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 204)

@@ -4,12 +4,11 @@ from django.urls import reverse
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from profiles.models import Profile, Gender
-from ..models import Popularity
+from profiles.models import Profile
 
 
-CREATE_POSTS = reverse("feeds-create")
-CREATE_REMARK = reverse("remarks-create")
+CREATE_POSTS = reverse("posts-create")
+CREATE_COMMENTS = reverse("comments-create")
 
 
 class FeedTest(TestCase):
@@ -25,45 +24,44 @@ class FeedTest(TestCase):
         self.tokens = RefreshToken().for_user(user)
         self.profile = Profile.objects.create(
             user=self.user, username="testuser",
-            gender=Gender.MALE, profile_image="profile/male.png"
+            gender=Profile.Gender.MALE, profile_image="profile/male.png"
         )
         self.auth_headers = {
             'HTTP_AUTHORIZATION': f'Bearer {self.tokens.access_token}'
         }
         payload = {
-            "text": "my first post"
+            "comment": "my first post"
         }
         self.post = self.client.post(
             CREATE_POSTS, payload, format="json",
             **self.auth_headers
         )
 
-    def test_create_post_remark(self):
+    def test_create_comment(self):
         payload = {
-            "popularity": Popularity.HEART,
+            "comment": "my first comment",
             "post": self.post.data.get("id")
         }
         response = self.client.post(
-            CREATE_REMARK, payload, **self.auth_headers
+            CREATE_COMMENTS, payload, **self.auth_headers
         )
         self.assertEqual(response.status_code, 201)
 
-    def test_update_post_remark(self):
+    def test_update_comment(self):
         payload = {
-            "popularity": Popularity.LIKE,
-            "text": "my updatedt post"
+            "comment": "my updatedt post"
         }
         response = self.client.patch(
-            reverse("feeds-update", args=[self.post.data.get("id")]),
+            reverse("posts-update", args=[self.post.data.get("id")]),
             payload, content_type='multipart/form-data; \
                 boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_delete_post_remark(self):
+    def test_delete_comment(self):
         response = self.client.delete(
-            reverse("feeds-delete", args=[self.post.data.get("id")]),
+            reverse("posts-delete", args=[self.post.data.get("id")]),
             **self.auth_headers
         )
         self.assertEqual(response.status_code, 204)

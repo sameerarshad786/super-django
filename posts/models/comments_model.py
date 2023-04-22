@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 from core.mixins import UUID
-from .feeds_model import Posts
+from .posts_model import Posts
 
 
 def comment_media_path(instance, filename):
@@ -12,14 +12,14 @@ def comment_media_path(instance, filename):
 class Comments(UUID):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE)
-    comment = models.ForeignKey(
+    parent = models.ForeignKey(
         "self", on_delete=models.CASCADE, blank=True, null=True
     )
-    text = models.TextField(blank=True)
+    comment = models.TextField(blank=True)
     files = models.FileField(blank=True, upload_to=comment_media_path)
 
     def get_text(self):
-        return f"{self.text[:20]}"
+        return f"{self.comment[:20]}"
 
     def get_files(self):
         return bool(self.files)

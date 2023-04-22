@@ -1,25 +1,25 @@
 from django.urls import path, include
 
-from ..views import feeds_view, comments_view, remarks_view
+from ..views import posts_view, comments_view, remarks_view
 
 
-FEEDS_API_VIEW = [
-    path("", feeds_view.FeedsAPIView.as_view(), name="feeds-list"),
+POSTS_PATTERNS = [
+    path("", posts_view.PostsAPIView.as_view(), name="posts-list"),
     path(
-        "create/", feeds_view.FeedsCreateAPIView.as_view(),
-        name="feeds-create"
+        "create/", posts_view.PostsCreateAPIView.as_view(),
+        name="posts-create"
     ),
     path(
-        "update/<str:pk>/", feeds_view.FeedsUpdateAPIView.as_view(),
-        name="feeds-update"
+        "update/<str:pk>/", posts_view.PostsUpdateAPIView.as_view(),
+        name="posts-update"
     ),
     path(
-        "delete/<str:pk>/", feeds_view.FeedsDeleteAPIView.as_view(),
-        name="feeds-delete"
+        "delete/<str:pk>/", posts_view.PostsDeleteAPIView.as_view(),
+        name="posts-delete"
     )
 ]
 
-COMMENTS_API_VIEW = [
+COMMENTS_PATTERNS = [
     path(
         "detail/<uuid:post_id>/",
         comments_view.CommentsRetrieveAPIView.as_view(),
@@ -45,7 +45,7 @@ COMMENTS_API_VIEW = [
 ]
 
 
-REMARKS_API_VIEW = [
+REMARKS_PATTERNS = [
     path(
         "post-remarks/<uuid:post_id>",
         remarks_view.PostRemarksRetrieveAPIView.as_view(),
@@ -72,7 +72,7 @@ REMARKS_API_VIEW = [
 
 
 urlpatterns = [
-    path("post/", include(FEEDS_API_VIEW)),
-    path("comments/", include(COMMENTS_API_VIEW)),
-    path("remarks/", include(REMARKS_API_VIEW))
+    path("post/", include(POSTS_PATTERNS)),
+    path("comments/", include(COMMENTS_PATTERNS)),
+    path("remarks/", include(REMARKS_PATTERNS))
 ]

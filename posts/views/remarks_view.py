@@ -5,7 +5,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from ..models import Remarks, Popularity
+from ..models import Remarks
 from ..serializers import RemarkSerializer
 from core.permissions import IsOwner
 from ..service.custom_db_func import CustomBoolOr
@@ -24,25 +24,33 @@ class PostRemarksRetrieveAPIView(generics.ListAPIView):
         ).aggregate(
             # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
             total=Count("pk"),
-            like=Count("pk", filter=Q(popularity=Popularity.LIKE)),
-            heart=Count("pk", filter=Q(popularity=Popularity.HEART)),
-            funny=Count("pk", filter=Q(popularity=Popularity.FUNNY)),
-            insightful=Count("pk", filter=Q(popularity=Popularity.INSIGHTFUL)),
-            disappoint=Count("pk", filter=Q(popularity=Popularity.DISAPPOINT)),
+            like=Count("pk", filter=Q(popularity=Remarks.Popularity.LIKE)),
+            heart=Count("pk", filter=Q(popularity=Remarks.Popularity.HEART)),
+            funny=Count("pk", filter=Q(popularity=Remarks.Popularity.FUNNY)),
+            insightful=Count(
+                "pk", filter=Q(popularity=Remarks.Popularity.INSIGHTFUL)),
+            disappoint=Count(
+                "pk", filter=Q(popularity=Remarks.Popularity.DISAPPOINT)),
             current_user_like=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.LIKE)
+                Q(user=request.user, popularity=Remarks.Popularity.LIKE)
             ),
             current_user_heart=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.HEART)
+                Q(user=request.user, popularity=Remarks.Popularity.HEART)
             ),
             current_user_funny=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.FUNNY)
+                Q(user=request.user, popularity=Remarks.Popularity.FUNNY)
             ),
             current_user_insightful=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.INSIGHTFUL)
+                Q(
+                    user=request.user,
+                    popularity=Remarks.Popularity.INSIGHTFUL
+                )
             ),
             current_user_disappoint=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.DISAPPOINT)
+                Q(
+                    user=request.user,
+                    popularity=Remarks.Popularity.DISAPPOINT
+                )
             ),
             user_popularity_details=ArrayAgg(
                 JSONObject(
@@ -65,25 +73,29 @@ class CommentRemarksRetrieveAPIView(generics.ListAPIView):
         query = Remarks.objects.filter(
             comment=kwargs["comment_id"]
         ).aggregate(
-            like=Count("pk", filter=Q(popularity=Popularity.LIKE)),
-            heart=Count("pk", filter=Q(popularity=Popularity.HEART)),
-            funny=Count("pk", filter=Q(popularity=Popularity.FUNNY)),
-            insightful=Count("pk", filter=Q(popularity=Popularity.INSIGHTFUL)),
-            disappoint=Count("pk", filter=Q(popularity=Popularity.DISAPPOINT)),
+            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
+            total=Count("pk"),
+            like=Count("pk", filter=Q(popularity=Remarks.Popularity.LIKE)),
+            heart=Count("pk", filter=Q(popularity=Remarks.Popularity.HEART)),
+            funny=Count("pk", filter=Q(popularity=Remarks.Popularity.FUNNY)),
+            insightful=Count(
+                "pk", filter=Q(popularity=Remarks.Popularity.INSIGHTFUL)),
+            disappoint=Count(
+                "pk", filter=Q(popularity=Remarks.Popularity.DISAPPOINT)),
             current_user_like=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.LIKE)
+                Q(user=request.user, popularity=Remarks.Popularity.LIKE)
             ),
             current_user_heart=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.HEART)
+                Q(user=request.user, popularity=Remarks.Popularity.HEART)
             ),
             current_user_funny=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.FUNNY)
+                Q(user=request.user, popularity=Remarks.Popularity.FUNNY)
             ),
             current_user_insightful=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.INSIGHTFUL)
+                Q(user=request.user, popularity=Remarks.Popularity.INSIGHTFUL)
             ),
             current_user_disappoint=CustomBoolOr(
-                Q(user=request.user, popularity=Popularity.DISAPPOINT)
+                Q(user=request.user, popularity=Remarks.Popularity.DISAPPOINT)
             ),
             user_popularity_details=ArrayAgg(
                 JSONObject(
