@@ -61,14 +61,16 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
-        if instance.gender == Profile.Gender.MALE:
-            return Profile.objects.filter(user=user).update(
-                profile_image="profile/male.png"
-            )
-        elif instance.gender == Profile.Gender.FEMALE:
-            return Profile.objects.filter(user=user).update(
-                cover_image="profile/female.png"
-            )
+        profile_image = validated_data.get("profile_image")
+        if not profile_image:
+            if instance.gender == Profile.Gender.MALE:
+                return Profile.objects.filter(user=user).update(
+                    profile_image="profile/male.png"
+                )
+            elif instance.gender == Profile.Gender.FEMALE:
+                return Profile.objects.filter(user=user).update(
+                    cover_image="profile/female.png"
+                )
 
         return super().update(instance, validated_data)
 
@@ -79,26 +81,27 @@ class CoverImageSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "cover_image")
         extra_kwargs = {
             "user": {"read_only": True},
-            "profile_image": {"required": False}
+            "cover_image": {"required": False}
         }
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
+        cover_image = validated_data.get("cover_image", "profile/default-cover.png")
         return Profile.objects.filter(user=user).update(
-            cover_image="cover/default-cover.png"
+            cover_image=cover_image
         )
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="user.id")
     full_name = serializers.CharField(source="user.profile.full_name")
     profile_image = serializers.ImageField(
         source="user.profile.profile_image")
-    cover_image = serializers.ImageField(source="user.profile.cover_image")
     profile_link = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ("full_name", "profile_image", "cover_image", "profile_link")
+        fields = ("id", "full_name", "profile_image", "profile_link")
 
     def get_profile_link(self, obj):
         return f"{settings.PROFILE_URL}{obj.user.profile.username}/"
