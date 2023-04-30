@@ -4,5 +4,6 @@ postgresql_db
 __pycache__
 
 .flake8
+.vscode
 
 media
