@@ -2,12 +2,14 @@ from rest_framework import serializers
 
 from ..models import Comments
 from ..service import comment_popularities, user_replied, total_replies
+from profiles.serializers import UserSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
     comment_popularities = serializers.JSONField(read_only=True)
     user_replied = serializers.BooleanField(read_only=True)
     total_replies = serializers.IntegerField(read_only=True)
+    user_details = UserSerializer(read_only=True, source="user.profile")
     child = serializers.SerializerMethodField()
 
     class Meta:
@@ -15,6 +17,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "user",
+            "user_details",
             "post",
             "parent",
             "comment",

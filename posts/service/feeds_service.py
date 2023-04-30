@@ -13,6 +13,7 @@ from ..service.custom_db_func import CustomBoolOr
 def post_popularities(query, request):
     post_remarks = Remarks.objects.filter(
         post=OuterRef("pk"), comment=None).values("post").annotate(
+            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
             popularities=JSONObject(
                 total_actions=Count("pk"),
                 like=Count(
@@ -49,6 +50,7 @@ def post_popularities(query, request):
             )
         ).values("popularities")
     return query.annotate(
+        # https://stackoverflow.com/questions/72072872/django-get-max-length-value-from-same-model-with-coalesce
         popularities=Coalesce(Subquery(post_remarks), Value(
             json.dumps(
                 {
@@ -72,6 +74,7 @@ def post_popularities(query, request):
 def comment_popularities(query, request):
     comment_popularities = Remarks.objects.filter(
         comment=OuterRef("pk")).values("comment").annotate(
+            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
             popularities=JSONObject(
                 total_actions=Count("pk"),
                 like=Count(
@@ -108,6 +111,7 @@ def comment_popularities(query, request):
             )
         ).values("popularities")
     return query.annotate(
+        # https://stackoverflow.com/questions/72072872/django-get-max-length-value-from-same-model-with-coalesce
         comment_popularities=Coalesce(Subquery(comment_popularities), Value(
             json.dumps(
                 {
