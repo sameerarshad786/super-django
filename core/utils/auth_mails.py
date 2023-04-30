@@ -17,7 +17,7 @@ class Util:
         current_site = get_current_site(data["request"]).domain
         relativeLink = reverse("verify-email")
         token = RefreshToken().for_user(user)
-        absurl = f"{current_site}{relativeLink}?token={str(token)}"
+        absurl = f"http://{current_site}{relativeLink}?token={str(token)}"
         template = "auth_mails/registration_mail.html"
         context = {
             "absurl": absurl
