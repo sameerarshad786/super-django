@@ -22,8 +22,8 @@ class PostsAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         query = self.filter_queryset(self.get_queryset())
-        query = post_popularities(query, request)
-        query = user_commented(query, request)
+        query = post_popularities(query, request.user)
+        query = user_commented(query, request.user)
         query = total_comment(query)
         serializer = self.get_serializer(
             query, context={"request": request}, many=True).data

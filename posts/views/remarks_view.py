@@ -1,4 +1,4 @@
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
 from django.db.models.functions import JSONObject
 from django.contrib.postgres.aggregates import ArrayAgg
 

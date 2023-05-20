@@ -1,16 +1,18 @@
 import json
 
+from typing import Union
+
 from django.db.models import (
     Q, F, Count, OuterRef, Subquery, Exists, Value, Func
 )
 from django.db.models.functions import JSONObject, Coalesce
 from django.db import models
 
-from ..models import Remarks, Comments
+from ..models import Posts, Comments, Remarks
 from ..service.custom_db_func import CustomBoolOr
 
 
-def post_popularities(query, request):
+def post_popularities(query: Union[Posts, None], user):
     post_remarks = Remarks.objects.filter(
         post=OuterRef("pk"), comment=None).values("post").annotate(
             # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
@@ -27,23 +29,23 @@ def post_popularities(query, request):
                 disappoint=Count(
                     "pk", filter=Q(popularity=Remarks.Popularity.DISAPPOINT)),
                 current_user_like=CustomBoolOr(
-                    Q(user=request.user, popularity=Remarks.Popularity.LIKE)
+                    Q(user=user, popularity=Remarks.Popularity.LIKE)
                 ),
                 current_user_heart=CustomBoolOr(
-                    Q(user=request.user, popularity=Remarks.Popularity.HEART)
+                    Q(user=user, popularity=Remarks.Popularity.HEART)
                 ),
                 current_user_funny=CustomBoolOr(
-                    Q(user=request.user, popularity=Remarks.Popularity.FUNNY)
+                    Q(user=user, popularity=Remarks.Popularity.FUNNY)
                 ),
                 current_user_insightful=CustomBoolOr(
                     Q(
-                        user=request.user,
+                        user=user,
                         popularity=Remarks.Popularity.INSIGHTFUL
                     )
                 ),
                 current_user_disappoint=CustomBoolOr(
                     Q(
-                        user=request.user,
+                        user=user,
                         popularity=Remarks.Popularity.DISAPPOINT
                     )
                 )
@@ -71,7 +73,7 @@ def post_popularities(query, request):
     )
 
 
-def comment_popularities(query, request):
+def comment_popularities(query: Union[Comments, None], user):
     comment_popularities = Remarks.objects.filter(
         comment=OuterRef("pk")).values("comment").annotate(
             # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
@@ -88,23 +90,23 @@ def comment_popularities(query, request):
                 disappoint=Count(
                     "pk", filter=Q(popularity=Remarks.Popularity.DISAPPOINT)),
                 current_user_like=CustomBoolOr(
-                    Q(user=request.user, popularity=Remarks.Popularity.LIKE)
+                    Q(user=user, popularity=Remarks.Popularity.LIKE)
                 ),
                 current_user_heart=CustomBoolOr(
-                    Q(user=request.user, popularity=Remarks.Popularity.HEART)
+                    Q(user=user, popularity=Remarks.Popularity.HEART)
                 ),
                 current_user_funny=CustomBoolOr(
-                    Q(user=request.user, popularity=Remarks.Popularity.FUNNY)
+                    Q(user=user, popularity=Remarks.Popularity.FUNNY)
                 ),
                 current_user_insightful=CustomBoolOr(
                     Q(
-                        user=request.user,
+                        user=user,
                         popularity=Remarks.Popularity.INSIGHTFUL
                     )
                 ),
                 current_user_disappoint=CustomBoolOr(
                     Q(
-                        user=request.user,
+                        user=user,
                         popularity=Remarks.Popularity.DISAPPOINT
                     )
                 )
@@ -132,7 +134,7 @@ def comment_popularities(query, request):
     )
 
 
-def total_comment(query):
+def total_comment(query: Union[Posts, None]):
     total_comment = Comments.objects.filter(
         post=OuterRef("pk")).values("post").annotate(
             total_comment=Func(F("pk"), function="COUNT")
@@ -152,17 +154,17 @@ def total_replies(query):
     )
 
 
-def user_commented(query, request):
+def user_commented(query, user):
     current_user_commented = Comments.objects.filter(
-        post=OuterRef("pk"), user=request.user)
+        post=OuterRef("pk"), user=user)
     return query.annotate(
         current_user_commented=Exists(current_user_commented)
     )
 
 
-def user_replied(query, request):
+def user_replied(query, user):
     user_replied = Comments.objects.filter(
-        parent=OuterRef("pk"), user=request.user)
+        parent=OuterRef("pk"), user=user)
     return query.annotate(
         user_replied=Exists(user_replied)
     )
