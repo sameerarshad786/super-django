@@ -20,7 +20,7 @@ class ProfileAPIView(generics.GenericAPIView):
     username_param_config = openapi.Parameter(
         "username",
         in_=openapi.IN_QUERY,
-        description="filter by username, if username is not provided then current user profile will be displayed",
+        description="filter by username, if username is not provided then current user profile will be displayed", # noqa
         type=openapi.TYPE_STRING
     )
 
@@ -38,12 +38,20 @@ class ProfileAPIView(generics.GenericAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = self.serializer_class(instance=profile).data
+        serializer = self.serializer_class(
+            instance=profile,
+            data=request.data,
+            context={"request": request}
+        ).data
         return Response(serializer, status=status.HTTP_200_OK)
 
     @permission_classes([IsOwner])
     def put(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user.profile, data=request.data)
+        serializer = self.serializer_class(
+            request.user.profile,
+            data=request.data,
+            context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -56,7 +64,11 @@ class DeleteProfileImageAPIView(generics.GenericAPIView):
     parser_classes = (parsers.MultiPartParser, )
 
     def put(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user.profile, data=request.data, context={"request": request})
+        serializer = self.serializer_class(
+            request.user.profile,
+            data=request.data,
+            context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -69,7 +81,11 @@ class DeleteCoverImageAPIView(generics.GenericAPIView):
     parser_classes = (parsers.MultiPartParser, )
 
     def put(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user.profile, data=request.data)
+        serializer = self.serializer_class(
+            request.user.profile,
+            data=request.data,
+            context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
