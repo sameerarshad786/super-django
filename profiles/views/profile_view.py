@@ -40,7 +40,6 @@ class ProfileAPIView(generics.GenericAPIView):
 
         serializer = self.serializer_class(
             instance=profile,
-            data=request.data,
             context={"request": request}
         ).data
         return Response(serializer, status=status.HTTP_200_OK)
