@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'posts.apps.PostsConfig',
     'friendships.apps.FriendShipsConfig',
     'supermarket.apps.SuperMarketConfig',
+    'message.apps.MessageConfig',
 
     # 3rd Party Packages
     'rest_framework',
@@ -230,4 +231,20 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 # allowed hosts for frontend
 CORS_ALLOWED_ORIGINS = [
     i.strip(',') for i in os.getenv('CORS_ALLOWED_ORIGINS').split()
+]
+
+
+DIALOGFLOW_FALLBACK_INTENTS = [
+    "I didn't get that. Can you say it again?",
+    "I missed what you said. What was that?",
+    "Sorry, could you say that again?",
+    "Sorry, can you say that again?",
+    "Can you say that again?",
+    "Sorry, I didn't get that. Can you rephrase?",
+    "Sorry, what was that?",
+    "One more time?",
+    "What was that?",
+    "Say that one more time?",
+    "I didn't get that. Can you repeat?",
+    "I missed that, say that again?"
 ]
