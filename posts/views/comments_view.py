@@ -13,8 +13,8 @@ class CommentsRetrieveAPIView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         query = self.filter_queryset(self.get_queryset())
-        query = comment_popularities(query, request)
-        query = user_replied(query, request)
+        query = comment_popularities(query, request.user)
+        query = user_replied(query, request.user)
         query = total_replies(query)
         serializer = self.get_serializer(
             query, context={"request": request}, many=True).data
@@ -27,8 +27,8 @@ class ChildCommentsRetrieveAPIView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         query = Comments.objects.filter(id=kwargs["pk"])
-        query = comment_popularities(query, request)
-        query = user_replied(query, request)
+        query = comment_popularities(query, request.user)
+        query = user_replied(query, request.user)
         query = total_replies(query)
         serializer = self.get_serializer(
             query, context={"request": request}, many=True).data
