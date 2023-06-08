@@ -16,3 +16,8 @@ class Messages(UUID):
         related_name="to_user"
     )
     message = models.TextField()
+
+    def get_message(self):
+        if self.message > 30:
+            return f"{self.message[:30]}..."
+        return self.message
