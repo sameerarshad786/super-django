@@ -15,8 +15,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-# from django.conf import settings
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -43,6 +41,7 @@ AUTH_USER_MODEL = 'core.User'
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -65,6 +64,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'friendship',
     'corsheaders',
+    'channels',
     'drf_yasg'
 ]
 
@@ -98,6 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'super_social.wsgi.application'
+ASGI_APPLICATION = 'super_social.asgi.application'
 
 
 # Database
