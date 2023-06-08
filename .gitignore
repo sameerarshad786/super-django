@@ -9,4 +9,4 @@ __pycache__
 media
 
 # client secrets
-client_secret/google/client_secret.json
+client_secret.json
