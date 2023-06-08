@@ -9,7 +9,7 @@ class CommentSerializer(serializers.ModelSerializer):
     comment_popularities = serializers.JSONField(read_only=True)
     user_replied = serializers.BooleanField(read_only=True)
     total_replies = serializers.IntegerField(read_only=True)
-    user_details = UserSerializer(read_only=True, source="user.profile")
+    user_details = UserSerializer(read_only=True, source="user")
     child = serializers.SerializerMethodField()
 
     class Meta:
@@ -36,8 +36,8 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_child(self, obj):
         request = self.context['request']
         query = Comments.objects.filter(parent=obj)
-        query = comment_popularities(query, request)
-        query = user_replied(query, request)
+        query = comment_popularities(query, request.user)
+        query = user_replied(query, request.user)
         query = total_replies(query)
         return CommentSerializer(
             query, context={'request': request}, many=True
