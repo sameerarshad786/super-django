@@ -86,17 +86,17 @@ class CoverImageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
-        cover_image = validated_data.get("cover_image", "cover/default-cover.png")
+        cover_image = validated_data.get(
+            "cover_image", "cover/default-cover.png")
         return Profile.objects.filter(user=user).update(
             cover_image=cover_image
         )
 
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source="user.id")
-    full_name = serializers.CharField(source="user.profile.full_name")
+    full_name = serializers.CharField(source="profile.full_name")
     profile_image = serializers.ImageField(
-        source="user.profile.profile_image")
+        source="profile.profile_image")
     profile_link = serializers.SerializerMethodField()
 
     class Meta:
@@ -104,4 +104,4 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "full_name", "profile_image", "profile_link")
 
     def get_profile_link(self, obj):
-        return f"{settings.PROFILE_URL}{obj.user.profile.username}/"
+        return f"{settings.PROFILE_URL}{obj.profile.username}/"

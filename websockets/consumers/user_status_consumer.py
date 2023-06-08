@@ -22,9 +22,9 @@ def update_user_online_status_to_false(user):
 @sync_to_async
 def online_users_list(user):
     return UserSerializer(
-        Profile.objects.filter(user__is_online=True).exclude(user_id=user.id),
+        User.objects.filter(is_online=True).exclude(id=user.id),
         many=True,
-        source="user.profile"
+        source="user"
     ).data
 
 
@@ -39,7 +39,7 @@ class UserStatus(AsyncJsonWebsocketConsumer):
         await update_user_online_status_to_false(self.user)
 
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
+        # text_data_json = json.loads(text_data)
         if online_users := await online_users_list(self.user):
             await self.send(json.dumps({"online_users": online_users}))
         else:

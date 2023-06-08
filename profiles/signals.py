@@ -11,5 +11,5 @@ def create_profile_of_verified_users(sender, instance, **kwargs):
         Profile.objects.filter(user=instance)
 
     elif instance.is_verified and User.objects.filter(
-        pk=instance.pk, is_verified=False).exists():
+            pk=instance.pk, is_verified=False).exists():
         Profile.objects.create(user=instance, username=instance.pk)

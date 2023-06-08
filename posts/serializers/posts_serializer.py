@@ -8,7 +8,7 @@ class Postserializer(serializers.ModelSerializer):
     popularities = serializers.JSONField(read_only=True)
     total_comment = serializers.IntegerField(read_only=True)
     current_user_commented = serializers.BooleanField(read_only=True)
-    user_details = UserSerializer(read_only=True, source="user.profile")
+    user_details = UserSerializer(read_only=True, source="user")
 
     class Meta:
         model = Posts
