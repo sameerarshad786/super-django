@@ -7,3 +7,6 @@ __pycache__
 .vscode
 
 media
+
+# client secrets
+client_secrets
