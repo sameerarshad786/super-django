@@ -86,7 +86,7 @@ class CoverImageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context["request"].user
-        cover_image = validated_data.get("cover_image", "profile/default-cover.png")
+        cover_image = validated_data.get("cover_image", "cover/default-cover.png")
         return Profile.objects.filter(user=user).update(
             cover_image=cover_image
         )
