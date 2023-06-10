@@ -1,6 +1,8 @@
 import jwt
 import uuid
 
+from urllib.parse import parse_qs
+
 from django.conf import settings
 
 from channels.db import database_sync_to_async
@@ -26,8 +28,19 @@ class TokenAuthMiddleWare:
 
     async def __call__(self, scope, receive, send):
         headers = dict(scope["headers"])
+        query_string = scope["query_string"].decode()
+        query_params = parse_qs(query_string)
+        conversation_id = None
+        parent_id = None
+        try:
+            conversation_id = query_params["conversation_id"][0]
+            parent_id = query_params["parent_id"][0]
+        except KeyError:
+            pass
         token = headers[b'authorization'].decode().split()[1]
         user = await return_user(token)
-        scope["client"] = user
+        scope["user"] = user
         scope["session_id"] = uuid.uuid4()
+        scope["conversation_id"] = conversation_id
+        scope["parent_id"] = parent_id
         return await self.app(scope, receive, send)

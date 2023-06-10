@@ -9,4 +9,4 @@ class BotMessages(UUID):
         User,
         on_delete=models.CASCADE
     )
-    conversation = models.JSONField(default=list)
+    discussion = models.JSONField(default=list)
