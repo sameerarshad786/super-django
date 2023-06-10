@@ -1,15 +1,25 @@
-from django.urls import re_path
+from django.urls import path
 
 from channels.routing import URLRouter
 
 from . import consumers
 
 
-USER_STATUS_PATTERN = [
-    re_path(r"user-status/", consumers.UserStatus.as_asgi())
+USER_STATUS_URLS_PATTERN = [
+    path("user-status/", consumers.UserStatus.as_asgi())
+]
+
+CHAT_URLS_PATTERNS = [
+    path("chat-bot/", consumers.ChatBotConsumer.as_asgi()),
+    path("", consumers.ChatConsumer.as_asgi()),
+    path("get-latest-conversations/", consumers.ConversationConsumer.as_asgi())
+]
+
+MAIN_URLS_PATTERNS = [
+    path("user/", URLRouter(USER_STATUS_URLS_PATTERN)),
+    path("chat/", URLRouter(CHAT_URLS_PATTERNS))
 ]
 
 websocket_urlpatterns = [
-    re_path(r"ws/chat/", consumers.ChatConsumer.as_asgi()),
-    re_path(r"ws/", URLRouter(USER_STATUS_PATTERN))
+    path("ws/", URLRouter(MAIN_URLS_PATTERNS))
 ]

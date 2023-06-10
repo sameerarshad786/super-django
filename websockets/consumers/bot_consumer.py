@@ -45,7 +45,7 @@ def first_from_bot(user, session_id):
         query_input=query_input
     )
     bot_messages = get_active_bot(user)
-    bot_messages.conversation.append(
+    bot_messages.discussion.append(
         {"client": "hi", "machine": response.query_result.fulfillment_text}
     )
     bot_messages.save()
@@ -67,17 +67,17 @@ def get_bot_response(text, session_id, user):
         query_input=query_input
     )
     bot_messages = get_active_bot(user)
-    bot_messages.conversation.append(
+    bot_messages.discussion.append(
         {"client": text, "machine": response.query_result.fulfillment_text}
     )
     bot_messages.save()
     return response.query_result.fulfillment_text
 
 
-class ChatConsumer(AsyncJsonWebsocketConsumer):
+class ChatBotConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.accept()
-        self.user = self.scope["client"]
+        self.user = self.scope["user"]
         self.session_id = self.scope["session_id"]
         self.message = await first_from_bot(self.user, self.session_id)
         await self.send(json.dumps({"machine": self.message}))
