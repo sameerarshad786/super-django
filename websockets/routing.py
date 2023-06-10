@@ -6,7 +6,7 @@ from . import consumers
 
 
 USER_STATUS_URLS_PATTERN = [
-    path("user-status/", consumers.UserStatus.as_asgi())
+    path("online-users/", consumers.TrackOnlineUsers.as_asgi())
 ]
 
 CHAT_URLS_PATTERNS = [

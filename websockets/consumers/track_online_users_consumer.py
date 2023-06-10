@@ -19,7 +19,7 @@ def online_users_list(user):
     ).data
 
 
-class UserStatus(AsyncJsonWebsocketConsumer):
+class TrackOnlineUsers(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.accept()
         self.user = self.scope["user"]

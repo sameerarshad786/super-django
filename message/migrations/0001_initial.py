@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('from_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='from_user', to=settings.AUTH_USER_MODEL)),
                 ('to_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='to_user', to=settings.AUTH_USER_MODEL)),
                 ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='message.messages')),
-                ('is_seen', models.BooleanField(default=True)),
+                ('is_seen', models.BooleanField(default=False)),
                 ('file', models.FileField(blank=True, null=True, upload_to=message.models.message_models.messages_file_path))
             ],
             bases=('core.uuid',),
