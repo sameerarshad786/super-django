@@ -16,7 +16,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         user = self.context["user"]
         request = self.context["request"]
         return UserSerializer(
-            obj.participants.exclude(id=user.id),
+            obj.participants.exclude(id=user.id).distinct(),
             many=True,
             context={"request": request}
         ).data

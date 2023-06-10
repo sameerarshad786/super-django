@@ -30,17 +30,27 @@ class TokenAuthMiddleWare:
         headers = dict(scope["headers"])
         query_string = scope["query_string"].decode()
         query_params = parse_qs(query_string)
-        conversation_id = None
-        parent_id = None
+
         try:
             conversation_id = query_params["conversation_id"][0]
+        except KeyError:
+            conversation_id = None
+
+        try:
+            page_number = query_params["page_number"][0]
+        except KeyError:
+            page_number = 1
+
+        try:
             parent_id = query_params["parent_id"][0]
         except KeyError:
-            pass
+            parent_id = None
+
         token = headers[b'authorization'].decode().split()[1]
         user = await return_user(token)
         scope["user"] = user
         scope["session_id"] = uuid.uuid4()
         scope["conversation_id"] = conversation_id
         scope["parent_id"] = parent_id
+        scope["page_number"] = page_number
         return await self.app(scope, receive, send)
