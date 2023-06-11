@@ -3,7 +3,8 @@
 cd ../../
 python3.8 -m venv venv
 source venv/bin/activate
-pip install -r super_social/requirements.txt
+cd super-social/
+pip install -r requirements.txt
 
 POSTGRES_VERSION=$(psql --version)
 
@@ -14,6 +15,9 @@ then
     sudo apt install postgresql
 fi
 
-PSQL="psql -X --dbname=postgres -w postgres --no-align --tuples-only -c"
-ENTER_TO_PSQL=$($PSQL "CREATE DATABASE paksocial;")
+PSQL="psql -X --dbname=postgres --no-align --tuples-only -c"
+ENTER_TO_PSQL=$($PSQL "CREATE DATABASE super_social;")
+
+python manage.py migrate
+
 echo -e "\n\n Project Succesfully Setup\n\n"
