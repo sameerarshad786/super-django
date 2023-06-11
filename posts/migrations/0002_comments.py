@@ -12,17 +12,19 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('core', '0001_initial'),
+        ('posts', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Posts',
+            name='Comments',
             fields=[
                 ('uuid_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.uuid')),
-                ('text', models.TextField(blank=True)),
-                ('files', models.FileField(blank=True, upload_to=posts.models.posts_model.Posts_uploaded_files)),
+                ('comment', models.TextField(blank=True)),
+                ('files', models.FileField(blank=True, upload_to=posts.models.comments_model.comment_media_path)),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='posts.posts')),
+                ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='posts.comments')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             bases=('core.uuid',),

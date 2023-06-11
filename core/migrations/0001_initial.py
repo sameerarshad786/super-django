@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(db_index=True, max_length=50, unique=True)),
                 ('is_staff', models.BooleanField(default=False)),
                 ('is_active', models.BooleanField(default=True)),
+                ('is_online', models.BooleanField(default=False)),
                 ('is_deactivate_by_admin', models.BooleanField(default=False)),
                 ('is_verified', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
