@@ -22,7 +22,7 @@ class PostRemarksRetrieveAPIView(generics.ListAPIView):
         query = Remarks.objects.filter(
             post=kwargs["post_id"], comment=None
         ).aggregate(
-            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
+            # https://docs.djangoproject.com/en/4.2/ref/models/conditional-expressions/#conditional-aggregation
             total=Count("pk"),
             like=Count("pk", filter=Q(popularity=Remarks.Popularity.LIKE)),
             heart=Count("pk", filter=Q(popularity=Remarks.Popularity.HEART)),
@@ -73,7 +73,7 @@ class CommentRemarksRetrieveAPIView(generics.ListAPIView):
         query = Remarks.objects.filter(
             comment=kwargs["comment_id"]
         ).aggregate(
-            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
+            # https://docs.djangoproject.com/en/4.2/ref/models/conditional-expressions/#conditional-aggregation
             total=Count("pk"),
             like=Count("pk", filter=Q(popularity=Remarks.Popularity.LIKE)),
             heart=Count("pk", filter=Q(popularity=Remarks.Popularity.HEART)),

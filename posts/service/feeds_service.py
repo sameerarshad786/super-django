@@ -15,7 +15,7 @@ from ..service.custom_db_func import CustomBoolOr
 def post_popularities(query: Union[Posts, None], user):
     post_remarks = Remarks.objects.filter(
         post=OuterRef("pk"), comment=None).values("post").annotate(
-            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
+            # https://docs.djangoproject.com/en/4.2/ref/models/conditional-expressions/#conditional-aggregation
             popularities=JSONObject(
                 total_actions=Count("pk"),
                 like=Count(
@@ -76,7 +76,7 @@ def post_popularities(query: Union[Posts, None], user):
 def comment_popularities(query: Union[Comments, None], user):
     comment_popularities = Remarks.objects.filter(
         comment=OuterRef("pk")).values("comment").annotate(
-            # https://docs.djangoproject.com/en/3.2/ref/models/conditional-expressions/#conditional-aggregation
+            # https://docs.djangoproject.com/en/4.2/ref/models/conditional-expressions/#conditional-aggregation
             popularities=JSONObject(
                 total_actions=Count("pk"),
                 like=Count(
