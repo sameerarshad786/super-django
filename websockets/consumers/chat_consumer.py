@@ -39,7 +39,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             conversation_on_id=self.conversation_id).acount()
         paginated_response = await paginate_response(
             count, self.page_number, serialized_function)
-        await self.send(json.dumps({"messages": paginated_response}, cls=DjangoJSONEncoder))
+        await self.send(
+            json.dumps({"messages": paginated_response}, cls=DjangoJSONEncoder)
+        )
 
     async def disconnect(self, close_code):
         pass
