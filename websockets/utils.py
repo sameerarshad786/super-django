@@ -10,7 +10,7 @@ async def paginate_response(count, page_number, serialized_function):
         'count': count,
         'has_previous': page.has_previous(),
         'has_next': page.has_next(),
-        'previous_page_number': page.previous_page_number() if page.has_previous() else None,
-        'next_page_number': page.next_page_number() if page.has_next() else None,
+        'previous_page_number': page.previous_page_number() if page.has_previous() else None, # noqa
+        'next_page_number': page.next_page_number() if page.has_next() else None, # noqa
     }
     return data
