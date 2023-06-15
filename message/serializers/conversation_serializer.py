@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from rest_framework import serializers
 
 from ..models import Conversation, Messages
@@ -24,11 +26,12 @@ class ConversationSerializer(serializers.ModelSerializer):
     def get_latest_message(self, obj):
         user = self.context["user"]
         data = dict()
-        data["message"] = {}
         try:
             instance = obj.messages_set.filter(
-                to_user=user).latest('created_at')
+                Q(to_user=user) | Q(from_user=user)
+            ).latest('created_at')
             data["message"] = instance.get_message()
+            data["is_seen"] = instance.is_seen
         except Messages.DoesNotExist:
             pass
         return data
