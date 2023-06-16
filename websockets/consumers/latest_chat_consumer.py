@@ -8,7 +8,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from message.models import Conversation
 from message.serializers import ConversationSerializer
 from ..http_request import request
-from ..utils import paginate_response
+from ..pagination import paginate_response
 
 
 @sync_to_async
