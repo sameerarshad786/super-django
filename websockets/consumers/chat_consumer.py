@@ -29,7 +29,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.user = self.scope["user"]
         self.conversation_id = self.scope["conversation_id"]
         self.parent_id = self.scope["parent_id"]
-        self.page_number = self.scope["page_number"]
         conversation = await Conversation.objects.aget(
             id=self.conversation_id)
         self.to_user = await conversation.participants.exclude(
@@ -38,7 +37,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         count = await Messages.objects.filter(
             conversation_on_id=self.conversation_id).acount()
         paginated_response = await paginate_response(
-            count, self.page_number, serialized_function)
+            count, 1, serialized_function)
         await self.send(
             json.dumps({"messages": paginated_response}, cls=DjangoJSONEncoder)
         )
@@ -49,6 +48,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
+        page_number = text_data_json.get("page_number", 1)
         if message:
             await Messages.objects.acreate(
                 from_user=self.user,
@@ -61,7 +61,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             conversation_on_id=self.conversation_id).acount()
         serialized_function = await all_messages(self.conversation_id)
         paginated_response = await paginate_response(
-            count, self.page_number, serialized_function)
+            count, page_number, serialized_function)
         await self.send(
             json.dumps({"messages": paginated_response}, cls=DjangoJSONEncoder)
         )
