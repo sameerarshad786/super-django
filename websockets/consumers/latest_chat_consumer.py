@@ -26,12 +26,11 @@ class ConversationConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.accept()
         self.user = self.scope["user"]
-        self.page_number = self.scope["page_number"]
         self.all_conversations = await get_all_conversations(self.user)
         count = await Conversation.objects.filter(
             participants__in=[self.user]).acount()
         paginted_response = await paginate_response(
-            count, self.page_number, self.all_conversations)
+            count, 1, self.all_conversations)
         await self.send(
             json.dumps({"all_conversations": paginted_response}))
 
@@ -39,11 +38,12 @@ class ConversationConsumer(AsyncJsonWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
-        # text_data_json = json.loads(text_data)
+        text_data_json = json.loads(text_data)
+        page_number = text_data_json.get("page_number", 1)
         count = await Conversation.objects.filter(
             participants__in=[self.user]).acount()
         serialized_function = await get_all_conversations(self.user)
         paginted_response = await paginate_response(
-            count, self.page_number, serialized_function)
+            count, page_number, serialized_function)
         await self.send(
             json.dumps({"all_conversations": paginted_response}))

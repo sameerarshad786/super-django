@@ -24,23 +24,23 @@ class TrackOnlineUsers(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.accept()
         self.user = self.scope["user"]
-        self.page_number = self.scope["page_number"]
         await User.objects.filter(id=self.user.id).aupdate(is_online=True)
         count = await User.objects.filter(
             is_online=True).exclude(id=self.user.id).acount()
         online_users = await online_users_list(self.user)
         paginted_response = await paginate_response(
-            count, self.page_number, online_users)
+            count, 1, online_users)
         await self.send(json.dumps({"online_users": paginted_response}))
 
     async def disconnect(self, close_code):
         await User.objects.filter(id=self.user.id).aupdate(is_online=False)
 
     async def receive(self, text_data):
-        # text_data_json = json.loads(text_data)
+        text_data_json = json.loads(text_data)
+        page_number = text_data_json.get("page_number", 1)
         count = await User.objects.filter(
             is_online=True).exclude(id=self.user.id).acount()
         online_users = await online_users_list(self.user)
         paginted_response = await paginate_response(
-            count, self.page_number, online_users)
+            count, page_number, online_users)
         await self.send(json.dumps({"online_users": paginted_response}))

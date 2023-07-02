@@ -37,11 +37,6 @@ class TokenAuthMiddleWare:
             conversation_id = None
 
         try:
-            page_number = query_params["page_number"][0]
-        except KeyError:
-            page_number = 1
-
-        try:
             parent_id = query_params["parent_id"][0]
         except KeyError:
             parent_id = None
@@ -52,5 +47,4 @@ class TokenAuthMiddleWare:
         scope["session_id"] = uuid.uuid4()
         scope["conversation_id"] = conversation_id
         scope["parent_id"] = parent_id
-        scope["page_number"] = page_number
         return await self.app(scope, receive, send)
