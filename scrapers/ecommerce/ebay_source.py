@@ -96,7 +96,7 @@ class Ebay(object):
                     product_type = ProductTypes.objects.create(type="SMART PHONE", valid_name=True)
 
                 _price = 0.00
-                original_price = 0
+                min_value = 0
                 if "to" in price:
                     price_range = price.split(" to ")
                     min_value = price_range[0][1:].replace(",", "")
@@ -104,8 +104,15 @@ class Ebay(object):
                     _price = NumericRange(Decimal(min_value), Decimal(max_value))
                 else:
                     single_value = price[1:]
-                    original_price = Decimal(single_value)
+                    min_value = single_value
                     _price = NumericRange(Decimal(single_value))
+
+                try:
+                    original_price = Decimal(product.find("span", class_="STRIKETHROUGH").text[1:])
+                except:
+                    original_price = Decimal(min_value)
+
+                discount = ((original_price-Decimal(min_value))/Decimal(original_price))*100 if original_price!= min_value else 0
 
                 data = {
                     "name": name,
@@ -115,6 +122,7 @@ class Ebay(object):
                     "ratings": Decimal(ratings),
                     "price": _price,
                     "original_price": original_price,
+                    "discount": discount,
                     "condition": condition.split(" ")[1].lower() if condition else Products.Condition.USED,
                     "shipping_charges": shipping_charges,
                     "product_source": product_source,
