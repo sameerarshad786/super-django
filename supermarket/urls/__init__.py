@@ -1,2 +1,2 @@
 from .urls import *
-from .store_urls import *
+from .product_urls import *
