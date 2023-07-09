@@ -14,5 +14,5 @@ if __name__ == "__main__":
     process1.start()
     process2.start()
 
-    process2.join()
+    process1.join()
     process2.join()
