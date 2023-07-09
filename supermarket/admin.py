@@ -1,53 +1,28 @@
 from django.contrib import admin
 
-from .models import StoreTypes, Stores, Products, ProductTypes
+from .models import (
+    Products, ProductSource
+)
 
 
-class StoreTypesAdmin(admin.ModelAdmin):
-    list_display = (
-        "id", "type", "valid_name", "created", "updated"
-    )
-
-
-admin.site.register(StoreTypes, StoreTypesAdmin)
-
-
-class StoreAdmin(admin.ModelAdmin):
+class ProductSourceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "user",
-        "store_type",
-        "store_name",
-        "is_verified",
-        "get_image",
-        "created",
-        "updated"
+        "name",
+        "domain",
+        "icon"
     )
-
-
-admin.site.register(Stores, StoreAdmin)
-
-
-class ProductTypesAdmin(admin.ModelAdmin):
-    list_display = (
-        "id", "type", "valid_name", "created", "updated"
-    )
-
-
-admin.site.register(ProductTypes, ProductTypesAdmin)
 
 
 class ProductsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "product_name",
-        "description",
-        "images",
-        "store",
-        "product_type",
-        "created",
-        "updated"
+        "source",
+        "name",
+        "type",
+        "image"
     )
 
 
+admin.site.register(ProductSource, ProductSourceAdmin)
 admin.site.register(Products, ProductsAdmin)

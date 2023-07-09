@@ -1,8 +1,8 @@
 from django.urls import path, include
 
-from .store_urls import STORE_URLS
+from .product_urls import SCRAPED_PRODUCTS_URLS
 
 
 urlpatterns = [
-    path("store/", include(STORE_URLS))
+    path("outside-sources/", include(SCRAPED_PRODUCTS_URLS))
 ]
