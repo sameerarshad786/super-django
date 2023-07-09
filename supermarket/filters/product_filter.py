@@ -31,8 +31,9 @@ class ProductsFilter(filters.FilterSet):
     type = filters.CharFilter(field_name="type__type", lookup_expr="icontains")
     brand = filters.ChoiceFilter(choices=Products.Brand.choices)
     condition = filters.ChoiceFilter(choices=Products.Condition.choices)
+    source = filters.ChoiceFilter(choices=Products.Source.choices)
     price = DecimalRangeFilter()
 
     class Meta:
         model = Products
-        fields = ("name", "type", "condition", "price") #, "brand"
+        fields = ("name", "type", "condition", "price", "brand", "source")
