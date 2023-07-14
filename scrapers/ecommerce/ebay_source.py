@@ -1,15 +1,12 @@
 import requests
 
-from io import BytesIO
 from urllib.request import urlopen
 from decimal import Decimal
 
 from django.db import transaction
-from django.core.files import File
 
 from bs4 import BeautifulSoup
 from psycopg2.extras import NumericRange
-from PIL import Image
 
 from supermarket.models import ProductSource, Products, ProductTypes
 
@@ -21,22 +18,19 @@ class Ebay(object):
     def ebay_source(self):
         page = requests.get(self.domain)
         soup = BeautifulSoup(page.content, "html.parser")
-        icon_link = soup.find("link", rel="icon")["href"]
-        get_icon_link = requests.get(icon_link)
-        file = BytesIO(get_icon_link.content)
-        icon = File(file, name="ebay-icon.png")
+        icon = soup.find("link", rel="icon")["href"]
         with transaction.atomic():
             try:
-                product_source = ProductSource.objects.get(domain=self.domain)
-            except:
                 product_source = ProductSource(
                     name="ebay",
                     icon=icon,
                     domain=self.domain
                 )
                 product_source.save()
+            except:
+                pass
 
-            return product_source
+        return product_source
 
     def ebay_products(self):
         page = urlopen("https://www.ebay.com/b/Cell-Phones-Smart-Watches-Accessories/15032/bn_1865441")
@@ -83,17 +77,8 @@ class Ebay(object):
                     image_url = product.find("img", "s-item__image-img")["data-src"]
                 except:
                     image_url = product.find("img", "s-item__image-img")["src"]
-                image_url = requests.get(image_url)
-                image = BytesIO(image_url.content)
-                file = File(image, name=f"{name[:40].strip()}.png")
-                if file.size > 1000000:
-                    file = Image.open(file)
-                    file.save(f"{name[:40].strip()}.png", quality=90, optimize=True)
-                product_source = self.ebay_source()
-                try:
-                    product_type = ProductTypes.objects.get(type="SMART PHONE", valid_name=True)
-                except ProductTypes.DoesNotExist:
-                    product_type = ProductTypes.objects.create(type="SMART PHONE", valid_name=True)
+                product_source = ProductSource.objects.get(domain=self.domain)
+                product_type = ProductTypes.objects.get(type="SMART PHONE")
 
                 _price = 0.00
                 min_value = 0
@@ -118,7 +103,7 @@ class Ebay(object):
                     "name": name,
                     "brand": brand_name if brand_name else Products.Brand.NOT_DEFINED,
                     "url": url,
-                    "image": file,
+                    "image": image_url,
                     "ratings": Decimal(ratings),
                     "price": _price,
                     "original_price": original_price,
@@ -136,4 +121,4 @@ class Ebay(object):
                         scraped_product.save()
 
                     except Exception as e:
-                        print(e)
+                        continue
