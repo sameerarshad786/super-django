@@ -1,8 +1,12 @@
 from django.contrib import admin
 
 from .models import (
-    Products, ProductSource
+    Products, ProductSource, ProductTypes
 )
+
+
+class ProductTypesAdmin(admin.ModelAdmin):
+    list_display = ("id", "type", "valid_name")
 
 
 class ProductSourceAdmin(admin.ModelAdmin):
@@ -19,10 +23,11 @@ class ProductsAdmin(admin.ModelAdmin):
         "id",
         "source",
         "name",
-        "type",
+        "type_id",
         "image"
     )
 
 
+admin.site.register(ProductTypes, ProductTypesAdmin)
 admin.site.register(ProductSource, ProductSourceAdmin)
 admin.site.register(Products, ProductsAdmin)

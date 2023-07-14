@@ -6,7 +6,6 @@ from django.contrib.postgres.fields import DecimalRangeField
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from core.mixins import UUID
-from core.validators import validate_file_size
 from .product_source_model import ProductSource
 
 
@@ -49,6 +48,14 @@ class Products(UUID):
         BLACK_BERRY = "black berry", _("Black Berry")
         MOTOROLA = "motorola", _("Motorola")
         NOKIA = "nokia", _("Nokia")
+        REDMI = "redmi", _("Redmi")
+        OPPO = "oppo", _("Oppo")
+        VIVO = "vivo", _("Vivo")
+        ITEL = "itel", _("Itel")
+        INFINIX = "infinix", _("Infinix")
+        SONY = "sony", _("Sony")
+        REALME = "realme", _("Realme")
+        TECHNO = "tecno", _("Tecno")
 
     product_source = models.ForeignKey(
         ProductSource, on_delete=models.CASCADE)
@@ -57,11 +64,7 @@ class Products(UUID):
     brand = models.CharField(max_length=11, choices=Brand.choices)
     type = models.ForeignKey(
         ProductTypes, on_delete=models.SET_NULL, blank=True, null=True)
-    image = models.ImageField(
-        upload_to=scraped_products_media_path,
-        max_length=100,
-        validators=[validate_file_size]
-    )
+    image = models.URLField()
     url = models.URLField(unique=True, max_length=500)
     items_sold = models.PositiveIntegerField(default=0)
     ratings = models.DecimalField(
@@ -83,3 +86,11 @@ class Products(UUID):
     source = models.CharField(max_length=11, choices=Source.choices)
     discount = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(-100)], default=0)
+
+    def save(self, *args, **kwargs):
+        if self.brand == Products.Brand.NOT_DEFINED:
+            for brand in Products.Brand._member_names_:
+                if brand.lower() in self.name.lower():
+                    self.brand = brand.lower()
+                    break
+        super().save(*args, **kwargs)

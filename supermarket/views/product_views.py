@@ -15,6 +15,3 @@ class ProductsAPIView(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductsFilter
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
