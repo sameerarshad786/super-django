@@ -64,7 +64,7 @@ class Daraz(object):
             product_type = ProductTypes.objects.get(type="SMART PHONE")
             data = {
                 "name": item["name"],
-                "brand": brand_name,
+                "brand": brand_name if brand_name else Products.Brand.NOT_DEFINED,
                 "url": url,
                 "image": item["image"],
                 "description": description,
@@ -72,7 +72,6 @@ class Daraz(object):
                 "price": NumericRange(price_in_dollars),
                 "original_price": original_price,
                 "condition": Products.Condition.NOT_DEFINED,
-                "brand": Products.Brand.NOT_DEFINED,
                 "shipping_charges": Decimal(item["shipping_charges"]) if item.get("shipping_charges") else 0,
                 "product_source": product_source,
                 "discount": int(item["discount"][:2]) if item.get("discount") else 0,

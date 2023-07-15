@@ -27,6 +27,7 @@ class ProductsSerializer(serializers.ModelSerializer):
             "price",
             "condition",
             "items_sold",
+            "product_source",
             "shipping_charges",
             "ratings",
             "discount",
