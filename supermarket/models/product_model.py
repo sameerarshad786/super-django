@@ -85,7 +85,7 @@ class Products(UUID):
         default=0, max_digits=5, decimal_places=2)
     source = models.CharField(max_length=11, choices=Source.choices)
     discount = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(-100)], default=0)
+        validators=[MinValueValidator(-100), MaxValueValidator(0)], default=0)
 
     def save(self, *args, **kwargs):
         if self.brand == Products.Brand.NOT_DEFINED:
