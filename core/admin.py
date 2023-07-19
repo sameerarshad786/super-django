@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models.user_model import User
+from django.contrib.gis.admin import OSMGeoAdmin
+
+from .models import User, UserSensitiveInformation
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -8,3 +10,10 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+class UserSensitiveInformationAdmin(OSMGeoAdmin):
+    list_display = ("id", "point")
+
+
+admin.site.register(UserSensitiveInformation, UserSensitiveInformationAdmin)
