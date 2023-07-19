@@ -11,8 +11,8 @@ from message.models import BotMessages
 @sync_to_async
 def delete_old_discussion(user):
     try:
-        bot_messages = BotMessages.objects.get(user=user, is_delete=False)
-        bot_messages.is_delete = True
+        bot_messages = BotMessages.objects.get(user=user, is_deleted=False)
+        bot_messages.is_deleted = True
         bot_messages.save()
     except BotMessages.DoesNotExist:
         pass
@@ -20,7 +20,7 @@ def delete_old_discussion(user):
 
 def get_active_bot(user):
     try:
-        bot_messages = BotMessages.objects.get(user=user, is_delete=False)
+        bot_messages = BotMessages.objects.get(user=user, is_deleted=False)
 
     except BotMessages.DoesNotExist:
         bot_messages = BotMessages(user=user)

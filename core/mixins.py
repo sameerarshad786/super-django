@@ -18,7 +18,7 @@ class UUID(models.Model):
         auto_now=True
     )
     is_active = models.BooleanField(default=True)
-    is_delete = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     def created(self):
         created = timesince.timesince(self.created_at).split(", ")[0]
