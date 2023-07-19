@@ -1,15 +1,16 @@
-import json
-
-from psycopg2.extras import NumericRange
-
+from django.contrib.gis.geos import Point
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from rest_framework.serializers import Field
+from psycopg2.extras import NumericRange
+
+from rest_framework import serializers
 from rest_framework.utils.formatting import lazy_format
 
+from ..service import get_countries
 
-class DecimalRangeFieldSerializer(Field):
+
+class DecimalRangeFieldSerializer(serializers.DictField):
     default_error_messages = {
         'invalid': _('Not a valid nuimber.'),
         'blank': _('This field may not be blank.'),
@@ -19,7 +20,6 @@ class DecimalRangeFieldSerializer(Field):
     }
 
     def __init__(self, **kwargs):
-        self.allow_blank = kwargs.pop('allow_blank', False)
         self.min_value = kwargs.pop('min_value', None)
         self.max_value = kwargs.pop('max_value', None)
         super().__init__(**kwargs)
@@ -37,9 +37,8 @@ class DecimalRangeFieldSerializer(Field):
     def to_internal_value(self, data):
         if not data:
             return self.fail('blank')
-        _data = json.loads(data)
-        lower = _data.get("lower")
-        upper = _data.get("upper")
+        lower = data.get("lower")
+        upper = data.get("upper")
         if not lower:
             return self.fail('lower')
         return NumericRange(float(lower), float(upper) if upper else None, '(]')
@@ -50,3 +49,34 @@ class DecimalRangeFieldSerializer(Field):
             "upper": value.upper
         }
         return data
+
+
+class PointSerializer(serializers.DictField):
+    default_error_messages = {
+        'blank': _('This field may not be blank.'),
+        'longitude': _('longitude field may not be blank.'),
+        'latitude': _('latitude field may not be blank.')
+    }
+
+    def to_internal_value(self, data):
+        longitude = data.get("longitude")
+        latitude = data.get("latitude")
+        altitude = data.get("altitude", 0)
+        if longitude is None:
+            return self.fail('longitude')
+        if latitude is None:
+            return self.fail('latitude')
+        return Point((float(longitude), float(latitude)), float(altitude))
+
+    def to_representation(self, value):
+        longitude = value.x
+        latitude = value.y
+
+        data = get_countries(longitude, latitude)
+        _data = {
+            "longitude": value.x,
+            "latitude": value.y,
+            "altitude": value.z,
+            "data": data
+        }
+        return _data
