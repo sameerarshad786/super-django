@@ -1,12 +1,14 @@
 import os
 
 from django.http import HttpRequest
-from django.urls import get_script_prefix
 
 
-def request():
-    request = HttpRequest()
-    request.META["SERVER_NAME"] = os.getenv("SERVER_NAME")
-    request.META["SERVER_PORT"] = os.getenv("SERVER_PORT")
-    request.path_info = get_script_prefix()
-    return request
+class Request(HttpRequest):
+    def _get_raw_host(self):
+        self.META["SERVER_NAME"] = os.getenv("SERVER_NAME")
+        self.META["SERVER_PORT"] = os.getenv("SERVER_PORT")
+        if self.META["SERVER_PORT"]:
+            host = "%s:%s" % (self.META["SERVER_NAME"], self.META["SERVER_PORT"])
+        else:
+            host = "%s" % (self.META["SERVER_NAME"])
+        return host

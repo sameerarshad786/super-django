@@ -8,7 +8,7 @@ from asgiref.sync import sync_to_async
 
 from core.models import User, UserSensitiveInformation
 from profiles.serializers import UserSerializer
-from ..http_request import request
+from ..http_request import Request
 from ..pagination import paginate_response
 
 
@@ -23,7 +23,7 @@ def online_users_list(user, location):
         User.objects.filter(is_online=True).exclude(id=user.id),
         many=True,
         source="user",
-        context={'request': request()}
+        context={'request': Request()}
     ).data
 
 
