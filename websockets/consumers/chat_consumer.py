@@ -7,7 +7,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 from message.models import Messages, Conversation
 from message.serializers import MessageSerializer
-from ..http_request import request
+from ..http_request import Request
 from ..pagination import paginate_response
 
 
@@ -18,7 +18,7 @@ def all_messages(conversation_id):
             conversation_on_id=conversation_id
         ).order_by("-created_at"),
         many=True,
-        context={'request': request()}
+        context={'request': Request()}
     ).data
     return messages
 
