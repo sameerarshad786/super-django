@@ -27,8 +27,7 @@ admin.site.register(Comments, CommentsAdmin)
 
 class RemarksAdmin(admin.ModelAdmin):
     list_display = (
-        "id", "user", "post", "comment", "popularity", "created",
-        "updated"
+        "id", "user", "post", "comment", "created", "updated"
     )
 
 

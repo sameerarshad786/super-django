@@ -13,7 +13,11 @@ class RemarkSerializer(serializers.ModelSerializer):
             "user",
             "post",
             "comment",
-            "popularity",
+            "like",
+            "heart",
+            "funny",
+            "insightful",
+            "disappoint",
             "created_at",
             "updated_at"
         )
