@@ -13,11 +13,8 @@ class Remarks(UUID):
     comment = models.ForeignKey(
         Comments, on_delete=models.SET_NULL, blank=True, null=True
     )
-
-    class Popularity(models.TextChoices):
-        LIKE = ("like", _("LIKE"))
-        HEART = ("heart", _("HEART"))
-        FUNNY = ("funny", _("FUNNY"))
-        INSIGHTFUL = ("insightful", _("INSIGHTFUL"))
-        DISAPPOINT = ("disappoint", _("DISAPPOINT"))
-    popularity = models.CharField(max_length=11, choices=Popularity.choices)
+    like = models.BooleanField(default=False)
+    heart = models.BooleanField(default=False)
+    funny = models.BooleanField(default=False)
+    insightful = models.BooleanField(default=False)
+    disappoint = models.BooleanField(default=False)
