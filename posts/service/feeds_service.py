@@ -6,49 +6,30 @@ from django.db.models import (
     Q, F, Count, OuterRef, Subquery, Exists, Value, Func
 )
 from django.db.models.functions import JSONObject, Coalesce
+from django.contrib.postgres.aggregates import BoolOr
 from django.db import models
+from django.db.models import Prefetch
 
 from ..models import Posts, Comments, Remarks
-from ..service.custom_db_func import CustomBoolOr
 
 
 def post_popularities(query: Union[Posts, None], user):
     post_remarks = Remarks.objects.filter(
-        post=OuterRef("pk"), comment=None).values("post").annotate(
+            post=OuterRef("pk"), comment=None
+        ).only("post").annotate(
             # https://docs.djangoproject.com/en/4.2/ref/models/conditional-expressions/#conditional-aggregation
             popularities=JSONObject(
                 total_actions=Count("pk"),
-                like=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.LIKE)),
-                heart=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.HEART)),
-                funny=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.FUNNY)),
-                insightful=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.INSIGHTFUL)),
-                disappoint=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.DISAPPOINT)),
-                current_user_like=CustomBoolOr(
-                    Q(user=user, popularity=Remarks.Popularity.LIKE)
-                ),
-                current_user_heart=CustomBoolOr(
-                    Q(user=user, popularity=Remarks.Popularity.HEART)
-                ),
-                current_user_funny=CustomBoolOr(
-                    Q(user=user, popularity=Remarks.Popularity.FUNNY)
-                ),
-                current_user_insightful=CustomBoolOr(
-                    Q(
-                        user=user,
-                        popularity=Remarks.Popularity.INSIGHTFUL
-                    )
-                ),
-                current_user_disappoint=CustomBoolOr(
-                    Q(
-                        user=user,
-                        popularity=Remarks.Popularity.DISAPPOINT
-                    )
-                )
+                like=Count("pk", filter=Q(like=True)),
+                heart=Count("pk", filter=Q(heart=True)),
+                funny=Count("pk", filter=Q(funny=True)),
+                insightful=Count("pk", filter=Q(insightful=True)),
+                disappoint=Count("pk", filter=Q(disappoint=True)),
+                current_user_like=BoolOr(Q(user=user, like=True)),
+                current_user_heart=BoolOr(Q(user=user, heart=True)),
+                current_user_funny=BoolOr(Q(user=user, funny=True)),
+                current_user_insightful=BoolOr(Q(user=user, insightful=True)),
+                current_user_disappoint=BoolOr(Q(user=user, disappoint=True)),
             )
         ).values("popularities")
     return query.annotate(
@@ -75,41 +56,20 @@ def post_popularities(query: Union[Posts, None], user):
 
 def comment_popularities(query: Union[Comments, None], user):
     comment_popularities = Remarks.objects.filter(
-        comment=OuterRef("pk")).values("comment").annotate(
-            # https://docs.djangoproject.com/en/4.2/ref/models/conditional-expressions/#conditional-aggregation
+            comment=OuterRef("pk")
+        ).only("comment").annotate(
             popularities=JSONObject(
                 total_actions=Count("pk"),
-                like=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.LIKE)),
-                heart=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.HEART)),
-                funny=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.FUNNY)),
-                insightful=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.INSIGHTFUL)),
-                disappoint=Count(
-                    "pk", filter=Q(popularity=Remarks.Popularity.DISAPPOINT)),
-                current_user_like=CustomBoolOr(
-                    Q(user=user, popularity=Remarks.Popularity.LIKE)
-                ),
-                current_user_heart=CustomBoolOr(
-                    Q(user=user, popularity=Remarks.Popularity.HEART)
-                ),
-                current_user_funny=CustomBoolOr(
-                    Q(user=user, popularity=Remarks.Popularity.FUNNY)
-                ),
-                current_user_insightful=CustomBoolOr(
-                    Q(
-                        user=user,
-                        popularity=Remarks.Popularity.INSIGHTFUL
-                    )
-                ),
-                current_user_disappoint=CustomBoolOr(
-                    Q(
-                        user=user,
-                        popularity=Remarks.Popularity.DISAPPOINT
-                    )
-                )
+                like=Count("pk", filter=Q(like=True)),
+                heart=Count("pk", filter=Q(heart=True)),
+                funny=Count("pk", filter=Q(funny=True)),
+                insightful=Count("pk", filter=Q(insightful=True)),
+                disappoint=Count("pk", filter=Q(disappoint=True)),
+                current_user_like=BoolOr(Q(user=user, like=True)),
+                current_user_heart=BoolOr(Q(user=user, heart=True)),
+                current_user_funny=BoolOr(Q(user=user, funny=True)),
+                current_user_insightful=BoolOr(Q(user=user, insightful=True)),
+                current_user_disappoint=BoolOr(Q(user=user, disappoint=True)),
             )
         ).values("popularities")
     return query.annotate(
