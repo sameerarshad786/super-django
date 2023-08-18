@@ -7,7 +7,7 @@ from psycopg2.extras import NumericRange
 from rest_framework import serializers
 from rest_framework.utils.formatting import lazy_format
 
-from ..service import get_countries
+from .service import get_countries
 
 
 class DecimalRangeFieldSerializer(serializers.DictField):
