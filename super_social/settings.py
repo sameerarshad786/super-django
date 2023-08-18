@@ -124,6 +124,7 @@ DATABASES = {
     }
 }
 
+DATABASE_ROUTERS = ["super_social.database_routers.DataBaseRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
