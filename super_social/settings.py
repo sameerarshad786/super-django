@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'posts.apps.PostsConfig',
     'friendships.apps.FriendShipsConfig',
-    'supermarket.apps.SuperMarketConfig',
+    'products.apps.ProductsConfig',
     'message.apps.MessageConfig',
 
     # 3rd Party Packages
@@ -113,6 +113,14 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT')
+    },
+    'supermarket': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.getenv('SUPERMARKET_DB_NAME'),
+        'USER': os.getenv('SUPERMARKET_DB_USER'),
+        'PASSWORD': os.getenv('SUPERMARKET_DB_PASSWORD'),
+        'HOST': os.getenv('SUPERMARKET_DB_HOST'),
+        'PORT': os.getenv('SUPERMARKET_DB_PORT')
     }
 }
 
