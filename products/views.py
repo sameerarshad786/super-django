@@ -10,7 +10,13 @@ from .filters import ProductsFilter
 
 class ProductsListAPIView(generics.ListAPIView):
     serializer_class = ProductsSerializer
-    queryset = Products.objects.using("supermarket").all().order_by("?")
+    queryset = Products.objects.all()
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = ProductsFilter
+
+    def get_queryset(self):
+        if self.request.GET:
+            return super().get_queryset()
+        else:
+            return super().get_queryset().order_by("?")
