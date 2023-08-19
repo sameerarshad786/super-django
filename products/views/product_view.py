@@ -3,13 +3,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 
 from products.models import Products
-from products.serializers import ProductsSerializer
+from products.serializers import ProductSerializer, RetrieveProductsSerializer
+from products.filters import ProductsFilter
 from core.pagination import StandardResultsSetPagination
-from .filters import ProductsFilter
 
 
 class ProductsListAPIView(generics.ListAPIView):
-    serializer_class = ProductsSerializer
+    serializer_class = ProductSerializer
     queryset = Products.objects.all()
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, )
@@ -20,3 +20,8 @@ class ProductsListAPIView(generics.ListAPIView):
             return super().get_queryset()
         else:
             return super().get_queryset().order_by("?")
+
+
+class RetrieveProductAPIView(generics.RetrieveAPIView):
+    serializer_class = RetrieveProductsSerializer
+    queryset = Products.objects.all()
