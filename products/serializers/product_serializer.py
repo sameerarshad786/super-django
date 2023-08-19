@@ -1,18 +1,35 @@
 from rest_framework import serializers
 
-from .models.product_model import Products, ProductTypes
+from ..models.product_model import Products, ProductTypes
 from core.custom_serializer_fields import DecimalRangeFieldSerializer
 
 
-class ProductType(serializers.ModelSerializer):
+class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductTypes
         fields = ("id", "type")
 
 
-class ProductsSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     price = DecimalRangeFieldSerializer()
-    type = ProductTypes()
+
+    class Meta:
+        model = Products
+        fields = (
+            "id",
+            "name",
+            "image",
+            "price",
+            "brand",
+            "condition",
+            "source",
+            "url"
+        )
+
+
+class RetrieveProductsSerializer(serializers.ModelSerializer):
+    price = DecimalRangeFieldSerializer()
+    type = ProductTypeSerializer()
 
     class Meta:
         model = Products
@@ -31,5 +48,5 @@ class ProductsSerializer(serializers.ModelSerializer):
             "ratings",
             "discount",
             "source",
-            "url",
+            "url"
         )
