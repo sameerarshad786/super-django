@@ -1,8 +1,7 @@
-from django.conf import settings
-
 from rest_framework import serializers
 
 from profiles.models.profile_model import Profile
+from profiles.service import generate_profile_link
 from core.models import User
 
 
@@ -104,4 +103,5 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "full_name", "profile_image", "profile_link")
 
     def get_profile_link(self, obj):
-        return f"{settings.PROFILE_URL}{obj.profile.username}/"
+        request = self.context["request"]
+        return generate_profile_link(request, obj.profile.username)
