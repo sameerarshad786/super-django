@@ -3,13 +3,15 @@ from rest_framework.response import Response
 
 from ..models import Comments
 from ..serializers import CommentSerializer
-from core.permissions import IsOwner
 from ..service import comment_popularities, user_replied, total_replies
 
 
 class CommentsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
-    queryset = Comments.objects.filter(parent=None)
+
+    def get_queryset(self):
+        return Comments.objects.filter(
+            post=self.kwargs["post_id"], parent=None).order_by("-created_at")
 
     def get(self, request, *args, **kwargs):
         query = self.filter_queryset(self.get_queryset())
@@ -23,10 +25,17 @@ class CommentsRetrieveAPIView(generics.RetrieveAPIView):
 
 class ChildCommentsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
-    queryset = Comments.objects.all()
+
+    def get_queryset(self):
+        post_id = self.kwargs["post_id"]
+        id = self.kwargs["id"]
+        return Comments.objects.filter(
+            id=id,
+            post_id=post_id
+        )
 
     def get(self, request, *args, **kwargs):
-        query = Comments.objects.filter(id=kwargs["pk"])
+        query = self.filter_queryset(self.get_queryset())
         query = comment_popularities(query, request.user)
         query = user_replied(query, request.user)
         query = total_replies(query)
@@ -40,15 +49,29 @@ class CommentsCreateAPIView(generics.CreateAPIView):
     queryset = Comments.objects.all()
     parser_classes = (parsers.MultiPartParser, )
 
+    def post(self, request, *args, **kwargs):
+        post_id = self.kwargs["post_id"]
+        serializer = self.serializer_class(
+            data=request.data,
+            context={"request": request, "post_id": post_id}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class CommentsUpdateAPIView(generics.UpdateAPIView):
     serializer_class = CommentSerializer
-    queryset = Comments.objects.all()
     parser_classes = (parsers.MultiPartParser, )
-    permission_classes = (IsOwner, )
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return Comments.objects.filter(user=self.request.user)
 
 
 class CommentsDeleteAPIView(generics.DestroyAPIView):
     serializer_class = CommentSerializer
-    queryset = Comments.objects.all()
-    permission_classes = (IsOwner, )
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return Comments.objects.filter(user=self.request.user)

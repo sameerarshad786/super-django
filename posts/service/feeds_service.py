@@ -8,7 +8,6 @@ from django.db.models import (
 from django.db.models.functions import JSONObject, Coalesce
 from django.contrib.postgres.aggregates import BoolOr
 from django.db import models
-from django.db.models import Prefetch
 
 from ..models import Posts, Comments, Remarks
 
