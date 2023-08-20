@@ -1,5 +1,3 @@
-from math import radians, sin, cos, sqrt, atan2
-
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -20,7 +18,10 @@ class UserSensitiveInformationAPIView(generics.GenericAPIView):
 
     def put(self, request, *args, **kwagrs):
         serializer = self.serializer_class(
-            data=request.data, instance=self.get_object(), context={"request": request})
+            data=request.data,
+            instance=self.get_object(),
+            context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
