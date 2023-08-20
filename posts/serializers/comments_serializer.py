@@ -9,7 +9,7 @@ class CommentSerializer(serializers.ModelSerializer):
     comment_popularities = serializers.JSONField(read_only=True)
     user_replied = serializers.BooleanField(read_only=True)
     total_replies = serializers.IntegerField(read_only=True)
-    user_details = UserSerializer(read_only=True, source="user")
+    user = UserSerializer(read_only=True)
     child = serializers.SerializerMethodField()
 
     class Meta:
@@ -17,7 +17,6 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "user",
-            "user_details",
             "post",
             "parent",
             "comment",
@@ -30,7 +29,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "updated"
         )
         extra_kwargs = {
-            "user": {"read_only": True}
+            "post": {"read_only": True}
         }
 
     def get_child(self, obj):
@@ -45,4 +44,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        return Comments.objects.create(user=user, **validated_data)
+        post_id = self.context["post_id"]
+        return Comments.objects.create(
+            user=user, post_id=post_id, **validated_data)

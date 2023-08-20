@@ -17,8 +17,13 @@ admin.site.register(Posts, PostsAdmin)
 
 class CommentsAdmin(admin.ModelAdmin):
     list_display = (
-        "id", "user", "post", "comment", "get_text", "get_files",
-        "created", "updated"
+        "id",
+        "user",
+        "post",
+        "get_text",
+        "get_files",
+        "created",
+        "updated"
     )
 
 
