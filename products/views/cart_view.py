@@ -28,6 +28,6 @@ class IncreaseOrDecreaseProductQuantityAPIView(generics.UpdateAPIView):
 class RemoveProductsAPIView(generics.DestroyAPIView):
     serializer_class = CartSerializer
     lookup_field = "product_id"
-    
+
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)

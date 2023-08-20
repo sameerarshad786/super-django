@@ -25,12 +25,14 @@ class DecimalRangeFieldSerializer(serializers.DictField):
         super().__init__(**kwargs)
 
         if self.min_value:
-            message = lazy_format(self.error_messages['min_value'], min_value=self.min_value)
+            message = lazy_format(
+                self.error_messages['min_value'], min_value=self.min_value)
             self.validators.append(
                 MinValueValidator(self.min_value, message=message))
 
         if self.min_value:
-            message = lazy_format(self.error_messages['max_value'], max_value=self.max_value)
+            message = lazy_format(
+                self.error_messages['max_value'], max_value=self.max_value)
             self.validators.append(
                 MaxValueValidator(self.max_value, message=message))
 
@@ -41,7 +43,8 @@ class DecimalRangeFieldSerializer(serializers.DictField):
         upper = data.get("upper")
         if not lower:
             return self.fail('lower')
-        return NumericRange(float(lower), float(upper) if upper else None, '(]')
+        return NumericRange(
+            float(lower), float(upper) if upper else None, '(]')
 
     def to_representation(self, value):
         data = {

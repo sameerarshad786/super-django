@@ -33,11 +33,12 @@ class RemarkSerializer(serializers.ModelSerializer):
         post_id = self.context.get("post_id")
         if Remarks.objects.filter(user=user, post_id=post_id).exists():
             raise serializers.ValidationError(_("Entry already exists"))
-        return Remarks.objects.create(user=user, post_id=post_id, **validated_data)
+        return Remarks.objects.create(
+            user=user, post_id=post_id, **validated_data)
 
     def update(self, instance, validated_data):
         fields = ["like", "heart", "funny", "insightful", "disappoint"]
-        result = [field for field in fields if next(iter(validated_data.keys()))]
+        result = [field for field in fields if next(iter(validated_data.keys()))] # noqa
         field_dict = {field: False for field in result}
         for x, y in {**field_dict, **validated_data}.items():
             setattr(instance, x, y)
