@@ -49,15 +49,10 @@ class CommentsCreateAPIView(generics.CreateAPIView):
     queryset = Comments.objects.all()
     parser_classes = (parsers.MultiPartParser, )
 
-    def post(self, request, *args, **kwargs):
-        post_id = self.kwargs["post_id"]
-        serializer = self.serializer_class(
-            data=request.data,
-            context={"request": request, "post_id": post_id}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["post_id"] = self.kwargs.get("post_id")
+        return context
 
 
 class CommentsUpdateAPIView(generics.UpdateAPIView):

@@ -3,22 +3,24 @@ from rest_framework.response import Response
 
 from ..models import Remarks
 from ..serializers import RemarkSerializer
-from core.permissions import IsOwner
 
 
 class PostRemarksRetrieveAPIView(generics.ListAPIView):
     serializer_class = RemarkSerializer
 
     def get_queryset(self):
-        return Remarks.objects.filter(comment=None)
+        return Remarks.objects.filter(
+            post_id=self.kwargs["post_id"], comment=None)
 
 
 class CommentRemarksRetrieveAPIView(generics.ListAPIView):
     serializer_class = RemarkSerializer
-    lookup_field = "comment_id"
 
     def get_queryset(self):
-        return Remarks.objects.exclude(comment=None)
+        return Remarks.objects.filter(
+            post=self.kwargs["post_id"],
+            comment=self.kwargs["comment_id"]
+        )
 
 
 class RemarksCreateAPIView(generics.CreateAPIView):

@@ -57,7 +57,7 @@ REMARKS_PATTERNS = [
         name="post-remarks"
     ),
     path(
-        "comment-remarks/<uuid:id>/",
+        "comment-remarks/<uuid:comment_id>/",
         remarks_view.CommentRemarksRetrieveAPIView.as_view(),
         name="comment-remarks"
     ),
