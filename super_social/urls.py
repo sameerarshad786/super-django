@@ -45,7 +45,6 @@ urlpatterns = [
     path('api/v1/message/', include('message.urls')),
 
     # 3rd Party Packages
-    path('friendship/', include('friendship.urls')),
     path(
         'api/v1/developer/docs/',
         schema_view.with_ui('swagger', cache_timeout=0),
