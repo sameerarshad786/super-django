@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'profiles.apps.ProfilesConfig',
     'posts.apps.PostsConfig',
-    'friendships.apps.FriendShipsConfig',
     'products.apps.ProductsConfig',
     'message.apps.MessageConfig',
 
