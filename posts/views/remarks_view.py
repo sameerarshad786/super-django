@@ -41,6 +41,13 @@ class RemarksUpdateAPIView(generics.GenericAPIView):
             post=self.kwargs["post_id"], user=self.request.user)
 
     def put(self, request, *args, **kwargs):
+        try:
+            self.get_object()
+        except Remarks.DoesNotExist:
+            return Response(
+                {"error": "permission denied"},
+                status=status.HTTP_403_FORBIDDEN
+            )
         serializer = self.serializer_class(
             data=request.data,
             instance=self.get_object(),
