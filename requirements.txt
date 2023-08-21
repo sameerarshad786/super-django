@@ -4,7 +4,6 @@ django-filter==23.1
 djangorestframework_simplejwt==5.2.2
 django_phonenumber_field==7.0.1
 phonenumbers==8.13.10
-django-friendship==1.9.6
 Pillow==9.5.0
 drf_yasg==1.21.5
 python_dotenv==1.0.0
