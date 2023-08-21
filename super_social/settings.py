@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'profiles.apps.ProfilesConfig',
     'posts.apps.PostsConfig',
-    'friendships.apps.FriendShipsConfig',
     'products.apps.ProductsConfig',
     'message.apps.MessageConfig',
 
@@ -63,7 +62,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'phonenumber_field',
-    'friendship',
     'corsheaders',
     'channels',
     'drf_yasg'
