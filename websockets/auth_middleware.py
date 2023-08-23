@@ -27,7 +27,6 @@ class TokenAuthMiddleWare:
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        headers = dict(scope["headers"])
         query_string = scope["query_string"].decode()
         query_params = parse_qs(query_string)
 
@@ -41,7 +40,7 @@ class TokenAuthMiddleWare:
         except KeyError:
             parent_id = None
 
-        token = headers[b'authorization'].decode().split()[1]
+        token = query_params["token"][0]
         user = await return_user(token)
         scope["user"] = user
         scope["session_id"] = uuid.uuid4()
