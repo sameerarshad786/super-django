@@ -3,6 +3,7 @@ djangorestframework==3.14.0
 django-filter==23.1
 djangorestframework_simplejwt==5.2.2
 django_phonenumber_field==7.0.1
+geopy==2.3.0
 phonenumbers==8.13.10
 Pillow==9.5.0
 drf_yasg==1.21.5
