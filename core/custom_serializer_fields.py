@@ -74,12 +74,5 @@ class PointSerializer(serializers.DictField):
     def to_representation(self, value):
         longitude = value.x
         latitude = value.y
-
-        data = get_countries(longitude, latitude)
-        _data = {
-            "longitude": value.x,
-            "latitude": value.y,
-            "altitude": value.z,
-            "data": data
-        }
-        return _data
+        location = get_countries(longitude, latitude)
+        return location
