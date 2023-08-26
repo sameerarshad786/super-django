@@ -32,7 +32,6 @@ class CartSerializer(serializers.ModelSerializer):
     def get_product(self, obj):
         request = self.context["request"]
         return ProductSerializer(
-            Products.objects.filter(id=obj.product).using("supermarket"),
-            context={"request": request},
-            many=True
+            Products.objects.using("supermarket").get(id=obj.product),
+            context={"request": request}
         ).data
