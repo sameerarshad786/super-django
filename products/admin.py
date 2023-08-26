@@ -12,9 +12,12 @@ class ProductsAdmin(admin.ModelAdmin):
         "updated"
     )
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).using("supermarket")
+
 
 @admin.register(Cart)
-class ProductsAdmin(admin.ModelAdmin):
+class CartAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",

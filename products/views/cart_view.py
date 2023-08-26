@@ -16,6 +16,11 @@ class AddProductsAPIView(generics.CreateAPIView):
     queryset = Cart.objects.all()
     lookup_field = "product_id"
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["product_id"] = self.kwargs.get("product_id")
+        return context
+
 
 class IncreaseOrDecreaseProductQuantityAPIView(generics.UpdateAPIView):
     serializer_class = CartSerializer

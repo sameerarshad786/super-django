@@ -10,7 +10,7 @@ from core.pagination import StandardResultsSetPagination
 
 class ProductsListAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer
-    queryset = Products.objects.all()
+    queryset = Products.objects.all().using("supermarket")
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = ProductsFilter
@@ -24,4 +24,4 @@ class ProductsListAPIView(generics.ListAPIView):
 
 class RetrieveProductAPIView(generics.RetrieveAPIView):
     serializer_class = RetrieveProductsSerializer
-    queryset = Products.objects.all()
+    queryset = Products.objects.all().using("supermarket")
