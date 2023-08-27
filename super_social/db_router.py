@@ -39,6 +39,6 @@ class DatabaseRouter:
         Make sure the products and contenttypes apps only appear in the
         'supermarket' database.
         """
-        if app_label == "products":
+        if model_name == "products":
             return db == "supermarket"
         return None
