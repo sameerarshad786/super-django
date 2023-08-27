@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from finance.models import ProductCheckout
+
+
+@admin.register(ProductCheckout)
+class ProductCheckoutAdmin(admin.ModelAdmin):
+    list_display = (
+        "id", "user", "product", "discounted", "pay_through", "created"
+    )
