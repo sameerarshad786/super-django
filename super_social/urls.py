@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/v1/profile/', include('profiles.urls')),
     path('api/v1/supermarket/', include('products.urls')),
     path('api/v1/message/', include('message.urls')),
+    path('api/v1/finance/', include('finance.urls')),
 
     # 3rd Party Packages
     path(
