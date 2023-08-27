@@ -31,8 +31,17 @@ CART_PATTERNS = [
     )
 ]
 
+SHIPPING_ADDRESS_PATTERN = [
+    path(
+        "get/",
+        views.ShippingAddressAPIView.as_view(),
+        name="shipping-address"
+    )
+]
+
 
 urlpatterns = [
     path("products/", include(PRODUCTS_PATTERNS)),
-    path("cart/", include(CART_PATTERNS))
+    path("cart/", include(CART_PATTERNS)),
+    path("shipping-address/", include(SHIPPING_ADDRESS_PATTERN))
 ]
