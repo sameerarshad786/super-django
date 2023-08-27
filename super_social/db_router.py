@@ -18,7 +18,7 @@ class DatabaseRouter:
         """
         Attempts to write products and contenttypes models go to supermarket.
         """
-        if model._meta.app_label == self.route_app_labels:
+        if model._meta.model_name == "products":
             return "supermarket"
         return None
 
@@ -29,7 +29,7 @@ class DatabaseRouter:
         """
         if (
             obj1._meta.model_name == "products"
-            or obj2._meta.model_name in "cart"
+            or obj2._meta.model_name == "cart"
         ):
             return True
         return None
@@ -39,6 +39,6 @@ class DatabaseRouter:
         Make sure the products and contenttypes apps only appear in the
         'supermarket' database.
         """
-        if app_label in self.route_app_labels:
+        if model_name == "products":
             return db == "supermarket"
         return None

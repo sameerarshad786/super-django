@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Products, Cart
+from .models import Products, Cart, ShippingAddress
 
 
 @admin.register(Products)
@@ -22,4 +22,14 @@ class CartAdmin(admin.ModelAdmin):
         "quantity",
         "created",
         "updated"
+    )
+
+
+@admin.register(ShippingAddress)
+class ShippingAddressAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "country",
+        "city"
     )

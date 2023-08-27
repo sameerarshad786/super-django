@@ -14,7 +14,7 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ("id", "user", "product", "quantity")
-    
+
     def validate(self, attrs):
         product = self.context.get("product_id")
         user = self.context["request"].user
@@ -30,8 +30,6 @@ class CartSerializer(serializers.ModelSerializer):
         )
 
     def get_product(self, obj):
-        request = self.context["request"]
         return ProductSerializer(
-            Products.objects.using("supermarket").get(id=obj.product),
-            context={"request": request}
+            Products.objects.get(id=obj.product)
         ).data
