@@ -6,8 +6,9 @@ from .models import Products, Cart, ShippingAddress
 class ProductsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "name",
+        "get_name",
         "brand",
+        "source",
         "created",
         "updated"
     )
