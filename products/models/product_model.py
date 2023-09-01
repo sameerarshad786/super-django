@@ -56,6 +56,8 @@ class Products(UUID):
         SONY = "sony", _("Sony")
         REALME = "realme", _("Realme")
         TECHNO = "tecno", _("Tecno")
+        XIAOMI = "xiaomi", _("Xiaomi")
+        HONOR = "honor", _("Honor")
 
     product_source = models.ForeignKey(
         ProductSource, on_delete=models.CASCADE)
