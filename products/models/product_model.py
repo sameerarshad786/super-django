@@ -84,3 +84,6 @@ class Products(UUID):
     source = models.CharField(max_length=11, choices=Source.choices)
     discount = models.IntegerField(
         validators=[MinValueValidator(-100), MaxValueValidator(0)], default=0)
+
+    def get_name(self):
+        return self.name if len(self.name) < 20 else f"{self.name[:20]}..."
