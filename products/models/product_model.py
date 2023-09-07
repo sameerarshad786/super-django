@@ -6,7 +6,6 @@ from django.contrib.postgres.fields import DecimalRangeField
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from core.mixins import UUID
-from .product_source_model import ProductSource
 
 
 def scraped_products_media_path(instance, filename):
@@ -59,8 +58,6 @@ class Products(UUID):
         XIAOMI = "xiaomi", _("Xiaomi")
         HONOR = "honor", _("Honor")
 
-    product_source = models.ForeignKey(
-        ProductSource, on_delete=models.CASCADE)
     name = models.CharField(unique=True, max_length=500)
     description = models.TextField()
     brand = models.CharField(
