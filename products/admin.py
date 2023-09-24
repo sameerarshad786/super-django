@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Products, Cart, ShippingAddress
+from .models import Products, ProductTypes, Cart, ShippingAddress
 
 
 @admin.register(Products)
@@ -11,6 +11,15 @@ class ProductsAdmin(admin.ModelAdmin):
         "source",
         "created",
         "updated"
+    )
+
+
+@admin.register(ProductTypes)
+class ProductTypesAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "type",
+        "valid_name"
     )
 
 
