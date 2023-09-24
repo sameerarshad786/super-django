@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Cart',
             fields=[
                 ('uuid_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.uuid')),
-                ('product', models.UUIDField(editable=True)),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.products')),
                 ('quantity', models.PositiveIntegerField(default=1)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],

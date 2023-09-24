@@ -58,7 +58,7 @@ class Products(UUID):
         XIAOMI = "xiaomi", _("Xiaomi")
         HONOR = "honor", _("Honor")
 
-    name = models.CharField(unique=True, max_length=500)
+    name = models.CharField(max_length=500)
     description = models.TextField()
     brand = models.CharField(
         max_length=11, choices=Brand.choices, default=Condition.NOT_DEFINED)

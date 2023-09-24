@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='Products',
             fields=[
                 ('uuid_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.uuid')),
-                ('name', models.CharField(max_length=500, unique=True)),
+                ('name', models.CharField(max_length=500)),
                 ('description', models.TextField()),
                 ('brand', models.CharField(choices=[('not defined', 'Not Defined'), ('apple', 'Apple'), ('samsung', 'Samsung'), ('google', 'Google'), ('lg', 'LG'), ('huawei', 'Huawei'), ('htc', 'HTC'), ('oneplus', 'OnePlus'), ('blackberry', 'BlackBerry'), ('motorola', 'Motorola'), ('nokia', 'Nokia'), ('redmi', 'Redmi'), ('oppo', 'Oppo'), ('vivo', 'Vivo'), ('itel', 'Itel'), ('infinix', 'Infinix'), ('sony', 'Sony'), ('realme', 'Realme'), ('tecno', 'Tecno'), ('xiaomi', 'Xiaomi'), ('honor', 'Honor')], default='not defined', max_length=11)),
                 ('image', models.URLField()),
