@@ -112,18 +112,10 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT')
-    },
-    'supermarket': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('SUPERMARKET_DB_NAME'),
-        'USER': os.getenv('SUPERMARKET_DB_USER'),
-        'PASSWORD': os.getenv('SUPERMARKET_DB_PASSWORD'),
-        'HOST': os.getenv('SUPERMARKET_DB_HOST'),
-        'PORT': os.getenv('SUPERMARKET_DB_PORT')
     }
 }
 
-DATABASE_ROUTERS = ["super_social.db_router.DatabaseRouter"]
+DATABASE_ROUTERS = []
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
