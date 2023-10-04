@@ -251,3 +251,10 @@ DIALOGFLOW_FALLBACK_INTENTS = [
 # stripe
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+# Elasticsearch configuration in settings.py
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    }
+}

@@ -11,7 +11,7 @@ class ProductTypeSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    price = DecimalRangeFieldSerializer()
+    # price = DecimalRangeFieldSerializer()
 
     class Meta:
         model = Products
@@ -19,7 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "image",
-            "price",
+            # "price",
             "brand",
             "condition",
             "ratings",
