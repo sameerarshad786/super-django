@@ -3,12 +3,13 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import exceptions
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-from core.models.user_model import User
+from core.models.user_model import User, SignUpToken
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -41,7 +42,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop("confirm_password")
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        SignUpToken.objects.create(user=user)
+        return user
 
 
 class EmailVerificationSerializer(serializers.Serializer):
@@ -97,10 +100,27 @@ class LoginSerializer(serializers.ModelSerializer):
                 "user does not exists"
             ))
 
-        return {
-            "email": user.email,
-            "tokens": user.tokens
-        }
+        if signup_token := SignUpToken.objects.filter(
+            user__email=email
+        ).filter(
+            tries__lte=3,
+            expiry_date__gte=timezone.now()
+        ):
+            instance = signup_token.first()
+            instance.tries += 1
+            instance.expiry_date = timezone.now()
+            instance.save()
+
+            return {
+                "email": user.email,
+                "tokens": user.tokens,
+                "project_token": instance.token
+            }
+
+        else:
+            return {
+                "project_token": "token is expired"
+            }
 
 
 class LogoutSerializer(serializers.Serializer):

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis.admin import OSMGeoAdmin
 
-from .models import User, UserSensitiveInformation
+from .models import User, UserSensitiveInformation, SignUpToken
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -17,3 +17,6 @@ class UserSensitiveInformationAdmin(OSMGeoAdmin):
 
 
 admin.site.register(UserSensitiveInformation, UserSensitiveInformationAdmin)
+
+
+admin.site.register(SignUpToken)

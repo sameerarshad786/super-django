@@ -1,6 +1,9 @@
+import string
+
 from datetime import timedelta
 
 from django.db import models
+from django.utils.crypto import get_random_string
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, \
     PermissionsMixin
 from django.utils.translation import gettext_lazy as _
@@ -68,3 +71,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         if int(x.total_seconds()) <= timedelta(seconds=59).seconds:
             return f"updated {int(x.total_seconds())} seconds ago"
         return f"{updated} ago"
+
+
+class SignUpToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)
+    tries = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    expiry_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(minutes=2))
+
+    def save(self, *args, **kwargs):
+        while True:
+            random_token = get_random_string(32, allowed_chars=string.ascii_letters + string.digits)
+            if not SignUpToken.objects.filter(user=self.user, token=random_token).exists():
+                self.token = random_token
+                break
+        return super().save(*args, **kwargs)
